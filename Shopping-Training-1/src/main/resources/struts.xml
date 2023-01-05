@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+
+	<constant name="struts.devMode" value="true" />
+	<constant name="struts.objectFactory" value="spring" />
+	
+
+
+	<package name="default" namespace="/" extends="struts-default">
+		<result-types>
+			<result-type name="json"
+				class="org.apache.struts2.json.JSONResult" />
+		</result-types>
+
+		<action name="users"
+			class="com.example.shopping.demo.controller.LoginAction"
+			method="proccessLogin">
+			<result name="SUCCESS" type="redirectAction">user</result>
+			<result name="ERROR">/login.jsp</result>
+			<result name="LoginUsersSS">/users.jsp</result> 
+		</action>
+		<action name="user"
+			class="com.example.shopping.demo.controller.LoginAction"
+			method="getAll">
+			<result name="success">/users.jsp</result>
+			<result name="login" type="redirectAction">login</result>
+			<result name="ERROR">/login.jsp</result>
+		</action>
+
+		<action name="getAllUser"
+			class="com.example.shopping.demo.controller.UserAction"
+			method="getAllUser">
+			<result name="success" type="json">
+				<param name="root">users</param>
+			</result>
+			<!-- <result name="success">/users.jsp</result> -->
+		</action>
+		<action name="insertUser"
+			class="com.example.shopping.demo.controller.UserAction"
+			method="insertUser">
+			<result name="success">/users.jsp</result>
+			<result name="ERROR">/error.jsp</result>
+		</action>
+		<action name="deleteUser"
+			class="com.example.shopping.demo.controller.UserAction"
+			method="deleteUser">
+			<result name="success" type="json">
+				<param name="root">users</param>
+			</result>
+		</action>
+
+		<action name="lockUnlockUser"
+			class="com.example.shopping.demo.controller.UserAction"
+			method="lockUnlockUser">
+			<result name="success" type="json">
+				<param name="root">active</param>
+			</result>
+			<!-- <result name="success">/users.jsp</result> -->
+			<result name="ERROR">/error.jsp</result>
+		</action>
+
+		<action name="getByUser"
+			class="com.example.shopping.demo.controller.UserAction"
+			method="getByUser">
+			<result name="success" type="json">
+				<param name="root">users</param>
+			</result>
+			<!-- <result name="success">/users.jsp</result>
+			<result name="user" type="redirectAction">user</result> -->
+		</action>
+		<!-- <action name="getByUser" class="com.example.shopping.demo.controller.UserAction" 
+			method="getByUser"> <result name="success">/login.jsp</result> </action> -->
+		<action name="login" class="com.example.shopping.demo.controller.LoginAction" >
+			<result name="success">/login.jsp</result>
+			<result name="ERROR">/login.jsp</result>
+			
+		</action>
+		<action name="logout"
+			class="com.example.shopping.demo.controller.LoginAction"
+			method="logout">
+			<result name="success" type="redirectAction">login</result>
+			<result name="ERROR">/users.jsp</result>
+		</action>
+		
+		<action name="addUser"
+			class="com.example.shopping.demo.controller.UserAction"
+			method="insertUser">
+			<result name="success" type="json">
+				<param name="root">users</param>
+			</result>
+			<!-- <result name="success">/users.jsp</result>-->
+			<result name="ERROR">/users.jsp</result> 
+		</action>
+		<action name="editUser"
+			class="com.example.shopping.demo.controller.UserAction"
+			method="editUser">
+			<result name="success" type="json">
+				<param name="root">users</param>
+			</result>
+			<!-- <result name="success">/users.jsp</result>-->
+			<result name="ERROR">/users.jsp</result> 
+		</action>
+		<action name="pages"
+			class="com.example.shopping.demo.controller.UserAction"
+			method="pageUser">
+			<result name="success" type="json">
+				<param name="root">users</param>
+			</result>
+
+		</action>
+		<action name="getUser"
+			class="com.example.shopping.demo.controller.UserAction"
+			method="getUser">
+			<result name="success" type="json">
+				<param name="root">user1</param>
+			</result>
+		</action>
+	</package>
+
+</struts>
