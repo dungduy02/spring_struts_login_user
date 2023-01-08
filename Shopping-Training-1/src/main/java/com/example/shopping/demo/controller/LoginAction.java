@@ -14,6 +14,7 @@ import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
 import org.apache.struts2.interceptor.SessionAware;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.example.shopping.demo.mapper.UserMapper;
 import com.example.shopping.demo.model.User;
@@ -93,6 +94,9 @@ public class LoginAction extends ActionSupport implements SessionAware, Paramete
     
 	@Autowired
 	private UserMapper userMapper;
+	
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
  
 	private static Pattern pattern;
 	private Matcher matcher;
@@ -129,8 +133,13 @@ public class LoginAction extends ActionSupport implements SessionAware, Paramete
 				return "ERROR";
 			}
 			User user = userMapper.getByUser(uname);
-	
-			if((this.uname.equals(user.getEmail())) && (this.password.equals(user.getPassword()))&& (user.getIs_active()==1)&& (user.getIs_delete() ==0)) {
+			String codePassword = user.getPassword();
+			boolean encodedPassword = bCryptPasswordEncoder.matches(this.password, codePassword);
+			
+			System.out.println("mã hóa trong DB:" + codePassword);
+			System.out.println("mã hóa dăng nhap:" + encodedPassword);
+			
+			if((this.uname.equals(user.getEmail())) && (encodedPassword== true)&& (user.getIs_active()==1)&& (user.getIs_delete() ==0)) {
 				Map<String, Object> session = ActionContext.getContext().getSession();	
 				session.put("USER", user.getUsename());
 

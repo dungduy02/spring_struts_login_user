@@ -61,7 +61,7 @@
             </div>
             <div class="form-group">
             <a href="getAll">
-               <input align="center" type="submit" value="Đăng nhập" class="btn float-right login_btn"/>
+               <input align="center" type="submit" value="Đăng nhập" class="btn float-right login_btn" />
             </a>
             </div>
 		</s:form>

@@ -420,3 +420,9 @@ h1 {
 .heddinPage2{
 	display: none;
 }
+.changPageFor{
+	display: flex;
+}
+#pageLoad{
+	margin-bottom: 10px;
+}

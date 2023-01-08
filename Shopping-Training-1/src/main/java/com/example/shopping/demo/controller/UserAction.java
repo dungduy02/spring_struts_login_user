@@ -5,6 +5,7 @@ import com.example.shopping.demo.model.User;
 import com.example.shopping.demo.utitls.PageUtitls;
 import com.opensymphony.xwork2.ActionSupport;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,6 +13,7 @@ import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 
 public class UserAction extends ActionSupport {
@@ -25,6 +27,7 @@ public class UserAction extends ActionSupport {
 	 private String emailUser;
 	 private String passwordUser;
 	 private String repeatPasswordUser;
+	 private String activeUser;
 //	 private String carlist;
 	 private String massage = "";
 	 private String groups;
@@ -43,6 +46,16 @@ public class UserAction extends ActionSupport {
 
 	 
 	
+
+	 
+
+	public String getActiveUser() {
+		return activeUser;
+	}
+
+	public void setActiveUser(String activeUser) {
+		this.activeUser = activeUser;
+	}
 
 	public User getUser1() {
 		return user1;
@@ -217,6 +230,10 @@ public class UserAction extends ActionSupport {
 
     @Autowired
     private UserMapper userMapper;
+    
+    @Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
+
      
 	private static Pattern pattern;
 	private Matcher matcher;
@@ -229,13 +246,24 @@ public class UserAction extends ActionSupport {
 	}
     
     public String getByUser() {
-    	System.out.println("userSearchFileer" + getGroup());
-    	System.out.println("userSearchFileerttttt" + getGroups());
-    	System.out.println("userSearchFileertttttaaaaaaaaa" + getActive());
+    
+    	list = userMapper.getByUsersList(fullname, email, getGroup(), getActive());
 
-    	users = userMapper.getByUsers(fullname, email, getGroup(), getActive());
+    	List<User> nextList;
+//    	if(getPage()== 1) {
+//    	 nextList = userMapper.getByUsers(fullname, email, getGroup(), getActive());
+//    	}else {
+//    		nextList = userMapper.getByUsersNext(fullname, email, getGroup(), getActive(), (getPage()-1)*10);
+//    		System.out.println("dữ liệu trang tiêp theo:" + nextList);
+////    	 nextList = userMapper.getNextUser((getPage()-1)*10);
+//    	}
+//    	 list = userMapper.getAll();
+         this.list = list;
+//    	this.users = nextList;
+    	
+//    	users = userMapper.getByUsers(fullname, email, getGroup(), getActive(), getPage());
+    	users = userMapper.getByUsersList(fullname, email, getGroup(), getActive());
 
-    	System.out.println("ttttttttttt" + users);
     	this.email = email;
     	this.fullname = fullname;
     	this.groups = getGroups();
@@ -246,21 +274,21 @@ public class UserAction extends ActionSupport {
     		this.users = users;
     		this.notification = "noFindUser";
     	}
-    	list = userMapper.getAll();
+//    	list = userMapper.getAll();
         this.list = list;
     	return SUCCESS;
     }
     
 public String insertUser() {
-	System.out.println("name: " + nameUser + emailUser + passwordUser + getGroup());
+	String encodedPassword = bCryptPasswordEncoder.encode(passwordUser);
+	
+
 	if(!validate(emailUser)) {
-		System.out.println("insertUser" + emailUser);
 		this.massage = "errorMail";
 		
 		return "SUCCESS";
 	}
 	if(this.passwordUser.length() <3) {
-		System.out.println("insertCheckPassUser" + email);
 		this.massage = "errorPass";
 		
 		return "SUCCESS";
@@ -268,12 +296,10 @@ public String insertUser() {
 //	if(passwordUser.equalsIgnoreCase(repeatPasswordUser)) {
 		User u = userMapper.getByUser(emailUser);
 		if(u == null) {
-			userMapper.insert(nameUser, emailUser, passwordUser, getGroup());
-			System.out.println("insertusser" );
+			userMapper.insert(nameUser, emailUser, encodedPassword, getGroup());
 //			getAllUser();
 		}
 //		getAllUser();
-		System.out.println("inssserttt");
 		list = userMapper.getAll();
         this.list = list;
 		return SUCCESS;
@@ -286,7 +312,6 @@ public String insertUser() {
 
 
 public String editUser() {
-	System.out.println("name: " + nameUser + emailUser + passwordUser + getGroup() + getId());
 //	if(!validate(emailUser)) {
 //		this.massage = "errorMail";
 //		getAllUser();
@@ -297,24 +322,27 @@ public String editUser() {
 //		getAllUser();
 //		return "ERROR";
 //	}
-	System.out.println("userByUser" + getId());
 		User u = userMapper.getUserById(getId());
-		System.out.println("end User bay" + u);
-		if(u != null) {
-			System.out.println("user edits" + u);
-			userMapper.editUser(nameUser, emailUser, passwordUser, getGroup(), getId());
-			System.out.println("insertusser" );
+		String passworDB = u.getPassword();
+		String encodedPassword = bCryptPasswordEncoder.encode(passwordUser);
+		if(u != null ) {
+			if(passwordUser == null) {
+				userMapper.editUserNoPass(nameUser, emailUser, getGroup(), getActiveUser(), getId());
+			}else {
+				if(passwordUser.equalsIgnoreCase(repeatPasswordUser)) {
+					userMapper.editUser(nameUser, emailUser, encodedPassword, getGroup(), getActiveUser(), getId());
+				}
+			}
+
 		}
 		list = userMapper.getAll();
         this.list = list;
-		System.out.println("inssserttt");
 		return SUCCESS;
 
 
 }
 
 	public String deleteUser() {
-		System.out.println("ddddddd"+ this.id);
 //		Long number = this.id.longValue();
 		userMapper.deleteUser(this.id.longValue());
 		
@@ -331,21 +359,20 @@ public String editUser() {
     	return SUCCESS;
     }
     public String getAllUser(){
-    	System.out.println("getAlll" + getByUser());
-    	if(getByUser().equalsIgnoreCase("user")) {
-    		System.out.println("nnnnuuuullllllll");
-    		this.users = null;
-    	}else {
-        users = userMapper.getAll();
+//    	if(getByUser().equalsIgnoreCase("user")) {
+//    		this.users = null;
+//    	}else {
+    	users = userMapper.getByUsersList(fullname, email, getGroup(), getActive());
+
+//        users = userMapper.getAll();
         this.users = users;
-        totalRecord = this.users.size();
-        PageUtitls pageUtils = new PageUtitls(page, size, totalRecord);
-        setTotalPages(pageUtils.getTotalPages());
+//        totalRecord = this.users.size();
+//        PageUtitls pageUtils = new PageUtitls(page, size, totalRecord);
+//        setTotalPages(pageUtils.getTotalPages());
         
-        System.out.println("uuuuuuu" + this.users.size());
-    	}
-        System.out.println(users.size());
-        list = userMapper.getAll();
+//    	}
+        list = userMapper.getByUsersList(fullname, email, getGroup(), getActive());
+//        list = userMapper.getAll();
         this.list = list;
         LOG.info("Listing persons");
     	return SUCCESS;
@@ -355,14 +382,30 @@ public String editUser() {
     }
     
     public String pageUser() {
-    	System.out.println("ppppppp" + getPage());
+    	
+    	
+    	
     	
     	List<User> nextList;
+    	System.out.println("số trang:" + fullname);
+    	System.out.println("số trang:" + email);
+    	System.out.println("số trang:" + getGroup());
+    	System.out.println("số trang:" + getActive());
+    	System.out.println("số trang:" + getPage());
     	if(getPage()== 1) {
-    	 nextList = userMapper.get10User();
-    	}else {
-    	 nextList = userMapper.getNextUser((getPage()-1)*10);
-    	}
+       	 	nextList = userMapper.getByUsers(fullname, email, getGroup(), getActive());
+       	}else {
+       		nextList = userMapper.getByUsersNext(fullname, email, getGroup(), getActive(), (getPage()-1)*10);
+       		System.out.println("dữ liệu trang tiêp theo:" + nextList);
+//       	 nextList = userMapper.getNextUser((getPage()-1)*10);
+       	}
+    	System.out.println("dữ liệu trang tiêp theo:" + nextList.size());
+//       	 if(getPage()== 1) {
+//    	 nextList = userMapper.get10User();
+//    	}else {
+//    	 nextList = userMapper.getNextUser((getPage()-1)*10);
+//    	}
+    	System.out.println("data: " + nextList);
     	 list = userMapper.getAll();
          this.list = list;
     	this.users = nextList;
@@ -370,15 +413,21 @@ public String editUser() {
     	
     }
     public String getUser() {
-    	System.out.println("llllllllll" + this.email);
     	
     		user1 =  userMapper.getByUser(this.email);
-    		System.out.println("kkkkkkkkkkkk" + user1);
+    		
+//    		byte[] result = user1.getPassword().getBytes();
+//    		byte[] text = "[B@77ae3599".getBytes();
+//    		byte[] decodeAccessKeyPin = org.apache.tomcat.util.codec.binary.Base64.decodeBase64(user1.getPassword());
+//    		String rrr = org.apache.tomcat.util.codec.binary.Base64.encodeBase64String(text);
+//    		String encode = org.apache.tomcat.util.codec.binary.Base64.encodeBase64String(text);
+//    		System.out.println("encode: " + encode) ;
+//    		byte[] decodeAccessKeyPin = org.apache.tomcat.util.codec.binary.Base64.decodeBase64(EMAIL_REGEX).decode(result);
+//    		System.out.println("decodeAccessKeyPin:" + decodeAccessKeyPin);
     		
     	return SUCCESS;
     }
     public String lockUnlockUser(){
-    	System.out.println("ddddddd"+ this.id + "aaaaaaaaaaaa" + this.active);
     		 userMapper.lockUnlockUser(this.active, this.id);
     		 list = userMapper.getAll();
              this.list = list;

@@ -122,8 +122,13 @@
 					</div>
 					<div class="col">
 						<div class="popup-item">
-							<lable class="input-group-texta">Trạng thái</lable>
-							<p type="text" class="statusCheck" placeholder="">TRUE</p>
+							<label for="modalActive" class="input-group-texta">Trạng thái</label> 
+								<select name="activeUser"
+								id="modalActive" class="form-control pr-5">
+								<option value="" selected>Chọn trạng thái</option>
+								<option value="1" selected>Đang hoạt động</option>
+								<option value="0">Tạm dừng</option>			
+							</select>
 						</div>
 					</div>
 					<div class="checkBtn">
@@ -253,19 +258,20 @@
 				<ul style="display: flex;">
 					<li class=" page-item page-link zd statusPage heddinPage1"
 						onclick="renderListUsersPage();"><</li>
+						<div class="changPageFor">
 					<s:iterator begin="1"
 						end="list.size%10 == 0? (list.size/10) : ((list.size/10)+1)"
 						step="1" var="i">
-						
+
 						<div class="changPage${i}">
 							<li class=" page-item page-link zd statusPage "
 								onclick="renderListUsers('${i }');">${i }</li>
 						</div>
 
 					</s:iterator>
-						 <li class=" page-item page-link zd statusPage heddinPage1" 
-							onclick="renderListUsersPageNext();" >>
-						</li> 
+					</div>
+					<li class=" page-item page-link zd statusPage heddinPage1"
+						onclick="renderListUsersPageNext();">></li>
 				</ul>
 
 			</div>
@@ -299,19 +305,20 @@
 				<ul style="display: flex;">
 					<li class=" page-item page-link zd statusPage heddinPage1"
 						onclick="renderListUsersPage();"><</li>
+						<div class="changPageFor">
 					<s:iterator begin="1"
 						end="list.size%10 == 0? (list.size/10) : ((list.size/10)+1)"
 						step="1" var="i">
-						
+
 						<div class="changPage${i}">
 							<li class=" page-item page-link zd statusPage "
 								onclick="renderListUsers('${i }');">${i }</li>
 						</div>
 
 					</s:iterator>
-						 <li class=" page-item page-link zd statusPage heddinPage1" 
-							onclick="renderListUsersPageNext();" >>
-						</li> 
+					</div>
+					<li class=" page-item page-link zd statusPage heddinPage1"
+						onclick="renderListUsersPageNext();">></li>
 				</ul>
 
 			</div>
@@ -374,10 +381,10 @@
 		/*             $('#modalEmail').html('<input name="emailUser" type="text" class="" value="'+ ${data.email} + '" id="modalEmail">')
 		 *//*  $('#modalGroup').html('<input name="group" type="text" class="" value="'+ ${data.email} + '" id="modalGroup">')
 
-		},
-		});
-		return data;
-		} */
+				},
+				});
+				return data;
+				} */
 
 		/* async function editUser(email) {
 		 let user = await getUser(email);

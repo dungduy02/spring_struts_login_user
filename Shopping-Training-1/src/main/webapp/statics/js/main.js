@@ -2,48 +2,76 @@
  * 
  */
 let countPageMain;
+let dataFilter = { fullname: '', email: '', groups: '', active: '' };
+
 async function reloadChange() {
 	var data = await $.ajax({
 		type: 'GET',
-		url: 'getAllUser',
+		url: 'getAllUser?' + 'fullname=' + fullname + '&email=' + email + '&group=' + group + "&active=" + active,
+
+		/*url: 'getAllUser',*/
 		/*data: 'fullname=' + fullname + 'email=' + email + 'groups=' + groups + "active=" + active,*/
 		success: function(data) {
-			console.log("hhhhhhhhhhhhhhhhhhhhhhhh");
-			console.log("getDataUsersSearch__result", data);
-			countPageMain = data.length;
-			console.log("số user:" + countPageMain);
+
 		},
 	});
+	countPageMain = data.length;
+	console.log("tổng số user:" + data.length);
 	return data;
 }
-let pageNow;
-renderListUsers(1);
-async function renderListUsers(page) {
-	const data = await getDataUsers(page);
-	console.log("data page:" + data);
-	console.log("data page11111:" + page);
-	var count = 1;
-	pageNow = page;
-	console.log("pagereder" + pageNow);
-	console.log("pagerederNow" + page);
-	if (page != 1) {
-		count = (page - 1) * 10 + 1;
-		console.log("pageredertrongIf" + pageNow);
-	console.log("pagerederNow_trongIf" + page);
-	console.log("CountrederNow_trongIf" + count);
-	
+function reloadPage() {
+	const reloadChanges = $('.changPageFor');
+	let htmls = '';
+	let countresult;
+	console.log("countMain" + countPageMain)
+	if (countPageMain % 10 == 0) {
+		countresult = countPageMain / 10;
+		countresult = Math.floor(countresult);
+	} else {
+		countresult = countPageMain / 10 + 1;
+		countresult = Math.floor(countresult);
 	}
-	const listElement = $('#listContent');
+	console.log("countMainREsult" + countresult)
+	for (let i = 1; i <= countresult; i++) {
+		htmls += `<div class="changPage${i}">
+					<li class=" page-item page-link zd statusPage "
+						onclick="renderListUsers('${i}');">${i}
+					</li>
+				</div>`
+	}
+	reloadChanges.html(htmls);
+}
+/*const datachange = reloadChange();*/
+/*reloadPage();*/
+let pageNow;
+
+renderListUsers(1);
+
+function loadData() {
+	/*	e.preventDefault();*/
+	mapData = {};
+	var form = document.getElementById('searchForm');
+	var formData = new FormData(form);
+
+	for (var data of formData) {
+		mapData[data[0]] = data[1];
+	}
+	dataFilter = mapData;
+	console.log("mapdata: " + mapData);
+	console.log("pageNow: " + pageNow);
+	console.log("mapdata: " + dataFilter.fullname);
+	/*	getDataSearch(1);
+	*/
+	renderListUsers(1);
+}
+$('#btnSearch').on('click', loadData);
+
+function setBackgroundPage(page) {
 	const statusPage = $('.statusPage');
 	const pageset = $('.statusPage');
 	const changPage = $('.changPage' + page);
-
-
-	console.log("pagehere" + page);
-	pageset.removeClass("setBackground");
 	for (i = 0; i < statusPage.length; i++) {
-		console.log("yy");
-		console.log("kiem tra page" + page + i);
+
 		if (i == page) {
 			changPage.html(`<li class=" page-item page-link zd statusPage setBackground" 
 							onclick="renderListUsers('${i}');">${i}
@@ -51,15 +79,59 @@ async function renderListUsers(page) {
 			break;
 		}
 	}
-	const reloadChanges = $('#numberUser');
-	const datachange = await reloadChange();
-	console.log("dataachange:" + reloadChange());
+}
+
+
+async function renderListUsers(page) {
+	console.log("page:" + page)
+	const data12 = await getDataUsers(page);
+	console.log("data12: " + data12);
+
+
+
+	let count = 1;
 	console.log("count:" + count);
+	pageNow = page;
+
+	if (page != 1) {
+
+		console.log("pagepage:" + page);
+		count = (page - 1) * 10 + 1;
+		console.log("count_10:" + count);
+	}
+	const listElement = $('#listContent');
+	const statusPage = $('.statusPage');
+	const pageset = $('.statusPage');
+	const changPage = $('.changPage' + page);
+	const reloadChanges = $('#numberUser');
+	fullname = dataFilter.fullname, email = dataFilter.email, group = dataFilter.groups, active = dataFilter.active;
+	const datachange = await reloadChange();
+	console.log("checklistUser:" + datachange.length);
+	/*for (i = 0; i < statusPage.length; i++) {
+
+		if (i == page) {
+			changPage.html(`<li class=" page-item page-link zd statusPage setBackground" 
+							onclick="renderListUsers('${i}');">${i}
+						</li>`)
+			break;
+		}
+	}*/
+
+	countPageMain = datachange.length;
+	console.log("countPageMain" + countPageMain);
+	reloadPage();
+	setBackgroundPage(page);
+
 	reloadChanges.html(`<p>
-				Hiển thị từ ${count = 1 ? count : count+ 1} ~ ${count == 1 ? count + 9 : ((count + 9) > datachange.length ? (count + (datachange.length % 10) -1) : count + 9)} trong tổng số ${datachange.length}
+
+				Hiển thị từ ${count = 1 ? count : count + 1} ~ ${count == 1 ? ((count + 9) > datachange.length ? (count + (datachange.length % 10) - 1) : count + 9) : ((count + 9) > datachange.length ? (count + (datachange.length % 10) - 1) : count + 9)} trong tổng số ${datachange.length}
 				user
 			</p>`)
-	const listContent = data.map((item, index) => `
+
+	if (data12.length == 0) {
+		listElement.html(`<td colspan="6" style="color: red; text-align: center;font-size: 20px;">Không tìm thấy dữ liệu</td>`);
+	} else {
+		const listContent = data12.map((item, index) => `
 <tr id="statusUser${item.id}">
 	<td>${count++}</td>
 	<td>${item.name}</td>
@@ -85,97 +157,36 @@ async function renderListUsers(page) {
 
 </tr>
 `)
-	listElement.html(listContent);
-	count = 1;
-}
-async function getDataUsers(page) {
-
-	var data = await $.ajax({
-		type: 'GET',
-		url: 'pages?' + 'page=' + page,
-		/* data: 'email=' + email, */
-		success: function(data) {
-			console.log("6666666666666666" + data + "dđ" + page);
-			console.log("6666666666666666__email" + data.email);
-		},
-	});
-	console.log("getDataUsers__result", data)
-	return data;
-}
-
-async function changeSearch(fullname, email, group, active) {
-	var data = await $.ajax({
-		type: 'GET',
-		url: 'getByUser?' + 'fullname=' + fullname + '&email=' + email + '&group=' + group + "&active=" + active,
-		/*data: 'fullname=' + fullname + 'email=' + email + 'groups=' + groups + "active=" + active,*/
-		success: function(data) {
-			console.log("hhhhhhhhhhhhhhhhhhhhhhhh");
-			console.log("getDataUsersSearch__result", data);
-		},
-	});
-	return data;
-}
-
-async function getDataSearch(datas) {
-	let count = 1;
-	console.log("onFilter", datas);
-	const data = await changeSearch(datas.fullname, datas.email, datas.groups, datas.active);
-	const listElement = $('#listContent');
-	console.log("listUserSeach" + data.length);
-
-	if (data.length == 0) {
-		listElement.html(`<td colspan="6" style="color: red; text-align: center;font-size: 20px;">Không tìm thấy dữ liệu</td>`);
-	} else {
-		const listContent = data.map((item, index) => `
-<tr>
-	<td>${count++}</td>
-	<td>${item.name}</td>
-	<td>${item.email}</td>
-	<td>${item.group}</td>
-	<td id="updateAcc${item.id}" data-active="${item.is_active}" >${item.is_active == "1" ? `<span  style="color: green">Đang hoạt động</span>` : `<span style="color: red">Tạm khóa</span>`}</td>
-	<td>
-	<button class="box">
-		<a onclick="editUser('${item.email}');" class="button" href="#popup1"><i class="fa fa-pencil"></i></a>
-	</button>
-	<button class="box trash">
-	
-		<a onclick="deleteUser('${item.id}', true);" href="#"> <i
-			class="fa fa-trash"> </i> 
-		</a>
-		
-
-	</button>
-	<button class="box">
-		<a onclick="LockUnLockUser('${item.id}', true);" class="button" ><i class="fa fa-user-plus"></i></a>
-	</button>
-</td>
-
-</tr>
-`);
 		listElement.html(listContent);
 	}
+	count = 0;
+	console.log("count_10_end:" + count);
+
+}
+async function getDataUsers(page) {
+	fullname = dataFilter.fullname, email = dataFilter.email, group = dataFilter.groups, active = dataFilter.active;
+
+	var data = await $.ajax({
+		type: 'GET',
+		url: 'pages?' + 'fullname=' + fullname + '&email=' + email + '&group=' + group + "&active=" + active + "&page=" + page,
+
+		/*url: 'pages?' + 'page=' + page,*/
+		/* data: 'email=' + email,*/
+		success: function(data) {
+			console.log("dataPage: " + data);
+		},
+	});
+	return data;
 }
 
-var mapData = {};
-$('#btnSearch').on('click', function(e) {
-	e.preventDefault();
-	mapData = {};
-	var form = document.getElementById('searchForm');
-	var formData = new FormData(form);
 
-	for (var data of formData) {
-		mapData[data[0]] = data[1];
-		console.log("data" + data[1])
-	}
-	console.log("data" + mapData)
-	getDataSearch(mapData);
-});
+//SEARCH
+var mapData = {};
 
 /*function btnDeleteSearch(){*/
 $('#btnDeleteSearch').on('click', function(e) {
 	e.preventDefault();
 	const listElement = document.getElementById("searchForm");
-	console.log("close + " + listElement)
 	listElement.reset();
 	renderListUsers(pageNow)
 
@@ -183,19 +194,7 @@ $('#btnDeleteSearch').on('click', function(e) {
 /*}*/
 
 
-
-var isUpdate = false;
-function getUsers(page = 0, size = 10) {
-	currentPage = page;
-	$.ajax({
-		type: 'GET',
-		url: 'user',
-		data: 'page=' + page + '&size=' + size,
-		success: function(data) {
-			getDataUsers(data);
-		},
-	});
-}
+//DELETE
 
 function deleteUser(id, isSearch = false) {
 	var text = 'Bạn có muốn xoá thành viên có email: ' + id + ' không?';
@@ -215,6 +214,7 @@ function deleteUser(id, isSearch = false) {
 		});
 }
 
+//CẬP NHẬT TRẠNG THÁI
 function LockUnLockUser(id, isSearch = false) {
 	var text;
 
@@ -231,7 +231,6 @@ function LockUnLockUser(id, isSearch = false) {
 					if (isSearch) console.log("sdfksdfjsd3333333" + active);
 					else console.log("sdfksdfjsd");
 					if (active == "0") {
-						console.log("hoat động");
 						$('#updateAcc' + id).attr("data-active", active);
 						$('#updateAcc' + id).html('<p style="color: red">Tạm khóa</p> ')
 					}
@@ -251,7 +250,6 @@ function LockUnLockUser(id, isSearch = false) {
 					if (isSearch) console.log("sdfksdfjsd33333334" + active);
 					else console.log("sdfksdfjsd");
 					if (active == "1") {
-						console.log("tam dung");
 						$('#updateAcc' + id).attr("data-active", active);
 						$('#updateAcc' + id).html('<p style="color: green">Đang hoạt động</p>')
 
@@ -264,63 +262,84 @@ function LockUnLockUser(id, isSearch = false) {
 }
 function resetForm() {
 	const listElement = document.getElementById("insertForm");
-	console.log("close + " + listElement)
 	listElement.reset();
 }
 
+
+//SEARCH
+
 var mapDataAdd = {};
+function loadDataAdd() {
+	/*	e.preventDefault();*/
+	mapData = {};
+	const listElement = document.getElementById("searchForm");
+	listElement.reset();
+
+	var form = document.getElementById('insertForm');
+	var formData = new FormData(form);
+
+	for (var data of formData) {
+		mapDataAdd[data[0]] = data[1];
+	}
+	dataFilter = mapData;
+	if (checkForm(false) == true) {
+		insertDataUser(mapDataAdd);
+		/*renderListUsers(pageNow);*/
+	}
+
+	console.log("mapdata: " + mapData);
+	console.log("pageNow: " + pageNow);
+	console.log("mapdata: " + dataFilter.fullname);
+	/*	getDataSearch(1);
+	*/
+}
+
+function loadDataInsert() {
+	/*	e.preventDefault();*/
+	mapData = {};
+	var form = document.getElementById('searchForm');
+	var formData = new FormData(form);
+
+	for (var data of formData) {
+		mapData[data[0]] = data[1];
+	}
+	dataFilter = mapData;
+	console.log("mapdata: " + mapData);
+	console.log("pageNow: " + pageNow);
+	console.log("mapdata: " + dataFilter.fullname);
+	/*	getDataSearch(1);
+	*/
+	if (checkForm(false) == true) {
+		insertDataUser(mapDataAdd);
+		/*renderListUsers(pageNow);*/
+	}
+	/*renderListUsers(pageNow);*/
+}
 function openAdd() {
 	const listElement = document.getElementById("popup1");
-	console.log("close + " + listElement)
 	listElement.style.display = 'block';
 	$('#titlePopup').text(' Thêm User');
 	$('#edituser').html('<input name="id" id="modalId" style="display: none">');
 	$('#checkBtnSubmit').html('<a id="btnInsert" type="submit" class="btnSave">Lưu</a>');
 
-	$('#btnInsert').on('click', function BtnSet(e) {
-		e.preventDefault();
-		const listElement = document.getElementById("searchForm");
-		console.log("close + " + listElement)
-		listElement.reset();
-
-
-		mapDataAdd = {};
-		var form = document.getElementById('insertForm');
-		var formData = new FormData(form);
-
-		for (var data of formData) {
-			mapDataAdd[data[0]] = data[1];
-			console.log("data" + data[1])
-		}
-		console.log("data" + mapDataAdd.nameUser)
-		if (checkForm(false) == true) {
-			insertDataUser(mapDataAdd);
-		}
-	});
+	$('#btnInsert').on('click', loadDataAdd);
 }
 
 
 
 async function insertDataUser(datas) {
-	console.log("onFilter", datas);
 	const data = await changeInsert(datas.nameUser, datas.emailUser, datas.passwordUser, datas.group);
 	if (checkForm(false) == true) {
 		const listElement = document.getElementById("popup1");
-		console.log("xét popups lại")
-		console.log("closessssssss + " + listElement)
 		listElement.style.display = 'none';
 	}
-	/*const listElement = document.getElementById("popup1");
-		console.log("xét popups lạissss")
-		console.log("close + " + listElement)
-		listElement.style.display = 'none';
-*/
-	$("#modalName").val(null);
-	$("#modalEmail").val(null);
-	$("#modalPassword").val(null);
-	$("#modalRepeatPassword").val(null);
-	$("#modalGroup").val(null);
-	renderListUsers(pageNow);
+	/*	$("#modalName").val(null);
+		$("#modalEmail").val(null);
+		$("#modalPassword").val(null);
+		$("#modalRepeatPassword").val(null);
+		$("#modalGroup").val(null);
+		$("#modalStatus").val(null);*/
+	/*renderListUsers(pageNow);*/
 
 }
 
@@ -329,10 +348,8 @@ async function changeInsert(nameUser, emailUser, passwordUser, group) {
 		type: 'POST',
 
 		url: 'addUser?' + 'nameUser=' + nameUser + '&emailUser=' + emailUser + '&passwordUser=' + passwordUser + '&group=' + group,
-		/*data: 'fullname=' + fullname + 'email=' + email + 'groups=' + groups + "active=" + active,*/
 		success: function(data) {
-			console.log("hhhhhhhhhhhhhhhhhhhhhhhh");
-			console.log("getDataUsersSearch__result", data);
+
 		},
 	});
 	return data;
@@ -341,7 +358,6 @@ async function changeInsert(nameUser, emailUser, passwordUser, group) {
 
 $("#addUserss").on('click', function(e) {
 	e.preventDefault();
-	console.log("data kfjasdfjh")
 	openAdd();
 });
 
@@ -352,22 +368,12 @@ $("#addUserss").on('click', function(e) {
 
 async function getUser(email) {
 	const listElement = document.getElementById("popup1");
-	console.log("close + " + listElement)
 	listElement.style.display = 'block';
 	console.log("444444444444" + email);
 	var data = await $.ajax({
 		type: 'GET',
 		url: 'getUser?' + 'email=' + email,
 		success: function(data) {
-			console.log("datafullname" + data);
-			console.log("datafullname" + data.emailUser);
-			/*$('#titlePopup').text(' Chỉnh sửa User');
-			$('#checkBtnSubmit').html('<a id="btnEdit" type="submit" class="btnSave">CẬP NHẬT</a>');
-			$('#edituser').html('<input name="id" id="modalId" style="display: none">');*/
-
-			/*             $('#modalEmail').html('<input name="emailUser" type="text" class="" value="'+ ${data.email} + '" id="modalEmail">')
-			 */           // $('#modalGroup').html('<input name="group" type="text" class="" value="'+ ${data.email} + '" id="modalGroup">')
-
 		},
 	});
 	return data;
@@ -375,34 +381,24 @@ async function getUser(email) {
 
 async function editUser(email) {
 	let user = await getUser(email);
-	console.log("dd" + user.id);
-	console.log("dd" + user.email);
-	console.log("dd" + user.password);
-	console.log("dd" + user.name);
-	console.log("dd" + user.group);
 	$('#modalId').val(user.id);
 	$('#modalName').val(user.name);
 	$('#modalEmail').val(user.email);
-	$('#modalPassword').val(user.password);
-	$('#modalRepeatPassword').val(user.password);
+	$('#modalPassword').val(null);
+	$('#modalRepeatPassword').val(null);
 	$('#modalGroup').val(user.group);
+	$('#modalActive').val(user.is_active);
 
 	openEdit();
 }
 function openEdit() {
 	const listElement = document.getElementById("popup1");
-	console.log("close + " + listElement)
-	listElement.style.display = 'block';
 	$('#titlePopup').text(' Chỉnh sửa User');
 	$('#checkBtnSubmit').html('<a id="btnEdit" type="submit" class="btnSave">CẬP NHẬT</a>');
-	/*	$('#edituser').html('<input name="id" id="modalId" style="display: none">');*/
-
-
 
 	$('#btnEdit').on('click', function(e) {
 		e.preventDefault();
 
-		console.log("data kfjasdfjh")
 		mapDataAdd = {};
 		var form = document.getElementById('insertForm');
 		var formData = new FormData(form);
@@ -411,18 +407,49 @@ function openEdit() {
 			mapDataAdd[data[0]] = data[1];
 			console.log("data" + data[1])
 		}
-		console.log("data" + mapDataAdd)
-		console.log("data1111" + mapDataAdd.nameUser)
 		if (checkForm(false))
 			editDataUser(mapDataAdd);
 
-		/*$("#modalName").val(null);
-		$("#modalEmail").val(null);
-		$("#modalPassword").val(null);
-		$("#modalRepeatPassword").val(null);
-		$("#modalGroup").val(null);*/
 	});
 }
+
+
+
+async function editDataUser(datas) {
+
+	const data = await changeEdit(datas.nameUser, datas.emailUser, datas.passwordUser, datas.repeatPasswordUser, datas.group, datas.activeUser, datas.id);
+	const listElement = document.getElementById("popup1");
+	listElement.style.display = 'none';
+	renderListUsers(pageNow);
+	$("#modalName").val(null);
+	$("#modalEmail").val(null);
+	$("#modalPassword").val(null);
+	$("#modalRepeatPassword").val(null);
+	$("#modalGroup").val(null);
+	$("#activeUser").val(null);
+
+}
+
+
+async function changeEdit(nameUser, emailUser, passwordUser, repeatPasswordUser, group, activeUser, id) {
+	var data = await $.ajax({
+		type: 'POST',
+
+		url: 'editUser?' + 'nameUser=' + nameUser + '&emailUser=' + emailUser + '&passwordUser=' + passwordUser + '&repeatPasswordUser=' + repeatPasswordUser + '&group=' + group + '&activeUser=' + activeUser + '&id=' + id,
+		success: function(data) {
+			$("#modalName").val(null);
+			$("#modalEmail").val(null);
+			$("#modalPassword").val(null);
+			$("#modalRepeatPassword").val(null);
+			$("#modalGroup").val(null);
+			$("#activeUser").val(null);
+		},
+	});
+	return data;
+}
+
+
+
 function capnhat() {
 	console.log("băt sư kiện ");
 }
@@ -430,48 +457,7 @@ function capnhat() {
 
 
 var mapDataAdd = {};
-/*$('#btnEdit').on('click', function (e) {
-	 e.preventDefault();
-	console.log("băt sư kiện ")
-});*/
 
-
-
-async function editDataUser(datas) {
-	console.log("onFilter", datas);
-	console.log("onFilter2222222222", datas.id);
-	const data = await changeEdit(datas.nameUser, datas.emailUser, datas.passwordUser, datas.group, datas.id);
-	const listElement = document.getElementById("popup1");
-	console.log("close + " + listElement)
-	listElement.style.display = 'none';
-	$("#modalName").val(null);
-	$("#modalEmail").val(null);
-	$("#modalPassword").val(null);
-	$("#modalRepeatPassword").val(null);
-	$("#modalGroup").val(null);
-	renderListUsers(pageNow);
-
-}
-
-
-async function changeEdit(nameUser, emailUser, passwordUser, group, id) {
-	var data = await $.ajax({
-		type: 'POST',
-
-		url: 'editUser?' + 'nameUser=' + nameUser + '&emailUser=' + emailUser + '&passwordUser=' + passwordUser + '&group=' + group + '&id=' + id,
-		/*data: 'fullname=' + fullname + 'email=' + email + 'groups=' + groups + "active=" + active,*/
-		success: function(data) {
-			console.log("hhhhhhhhhhhhhhhhhhhhhhhh");
-			console.log("getDataUsersSearch__result", data);
-			$("#modalName").val(null);
-			$("#modalEmail").val(null);
-			$("#modalPassword").val(null);
-			$("#modalRepeatPassword").val(null);
-			$("#modalGroup").val(null);
-		},
-	});
-	return data;
-}
 
 
 function changeNotify(element, data) {
@@ -502,7 +488,6 @@ function checkForm(checkinsert) {
 
 	let user;
 
-	console.log("userMAP:" + mapData.nameUser.length);
 	if (mapData.nameUser.length == 0) {
 		changeNotify(errorName, 'Vui lòng nhập tên người sử dụng');
 		isValid = false;
@@ -525,10 +510,11 @@ function checkForm(checkinsert) {
 		changeNotify(errorGroup, 'Nhóm không được để trống');
 		isValid = false;
 	}
-	if (mapData.passwordUser.length == 0) {
+	/*if (mapData.passwordUser.length == 0) {
 		changeNotify(errorPassword, 'Mật khẩu không được để trống');
 		isValid = false;
-	} else if (mapData.passwordUser.length < 6) {
+	} else */
+	if (mapData.passwordUser.length < 6 && mapData.passwordUser.length > 0) {
 		changeNotify(errorPassword, 'Mật khẩu phải hơn 5 ký tự');
 		isValid = false;
 	}
@@ -551,26 +537,36 @@ function closePopupForm() {
 }
 
 function renderListUsersPage() {
-	if(pageNow != 1)
-	renderListUsers(pageNow - 1);
+	if (pageNow != 1)
+		renderListUsers(pageNow - 1);
 }
 function renderListUsersPageNext() {
 	let indexCount;
-	if(countPageMain %10 == 0){
-		indexCount = countPageMain /10;
-	}else{
-		indexCount = countPageMain /10 + 1;
+	if (countPageMain % 10 == 0) {
+		indexCount = countPageMain / 10;
+	} else {
+		indexCount = countPageMain / 10 + 1;
 	}
-	if(pageNow < indexCount)
-	renderListUsers(pageNow + 1);
+	if (pageNow < indexCount - 1)
+		var number = parseInt(pageNow, 0);
+	console.log("page:" + typeof pageNow == 'number')
+	console.log("pageNext:" + number + 1)
+	renderListUsers(number+ 1);
 }
-/*function renderListUsersPageNext() {
-	var count;
 
-	console.log("số user1212212:" + countPageMain);
-	countPageMain % 10 == 0 ? (count = countPageMain / 10) : (count = countPageMain / 10 + 1)
-	if (pageNow < count) {
-		renderListUsers(pageNow + 1);
-		console.log("pagepage" + pageNow)
-	}
-}*/
+
+
+
+
+var isUpdate = false;
+function getUsers(page = 0, size = 10) {
+	currentPage = page;
+	$.ajax({
+		type: 'GET',
+		url: 'user',
+		data: 'page=' + page + '&size=' + size,
+		success: function(data) {
+			getDataUsers(data);
+		},
+	});
+}
