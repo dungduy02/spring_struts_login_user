@@ -359,20 +359,12 @@ public String editUser() {
     	return SUCCESS;
     }
     public String getAllUser(){
-//    	if(getByUser().equalsIgnoreCase("user")) {
-//    		this.users = null;
-//    	}else {
+
     	users = userMapper.getByUsersList(fullname, email, getGroup(), getActive());
 
-//        users = userMapper.getAll();
         this.users = users;
-//        totalRecord = this.users.size();
-//        PageUtitls pageUtils = new PageUtitls(page, size, totalRecord);
-//        setTotalPages(pageUtils.getTotalPages());
-        
-//    	}
+
         list = userMapper.getByUsersList(fullname, email, getGroup(), getActive());
-//        list = userMapper.getAll();
         this.list = list;
         LOG.info("Listing persons");
     	return SUCCESS;

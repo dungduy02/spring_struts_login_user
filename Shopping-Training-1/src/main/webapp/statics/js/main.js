@@ -21,6 +21,7 @@ async function reloadChange() {
 }
 function reloadPage() {
 	const reloadChanges = $('.changPageFor');
+	const pageLoad = $('.page-count');
 	let htmls = '';
 	let countresult;
 	console.log("countMain" + countPageMain)
@@ -31,14 +32,22 @@ function reloadPage() {
 		countresult = countPageMain / 10 + 1;
 		countresult = Math.floor(countresult);
 	}
-	console.log("countMainREsult" + countresult)
-	for (let i = 1; i <= countresult; i++) {
-		htmls += `<div class="changPage${i}">
+	if (countresult <= 1) {
+		console.log("số page = 1" + countresult)
+		pageLoad.addClass('hidden');
+	} else {
+		pageLoad.removeClass('hidden');
+		console.log("countMainREsult" + countresult)
+		for (let i = 1; i < countresult; i++) {
+			console.log("số page = khác 1" + countresult);
+			htmls += `<div class="changPage${i}">
 					<li class=" page-item page-link zd statusPage "
 						onclick="renderListUsers('${i}');">${i}
 					</li>
 				</div>`
+		}
 	}
+
 	reloadChanges.html(htmls);
 }
 /*const datachange = reloadChange();*/
@@ -181,14 +190,17 @@ async function getDataUsers(page) {
 
 
 //SEARCH
-var mapData = {};
+/*var mapData = {};*/
 
 /*function btnDeleteSearch(){*/
 $('#btnDeleteSearch').on('click', function(e) {
 	e.preventDefault();
 	const listElement = document.getElementById("searchForm");
 	listElement.reset();
-	renderListUsers(pageNow)
+	dataFilter = { fullname: '', email: '', groups: '', active: '' };
+	renderListUsers(1);
+
+
 
 })
 /*}*/
@@ -272,8 +284,8 @@ var mapDataAdd = {};
 function loadDataAdd() {
 	/*	e.preventDefault();*/
 	mapData = {};
-	const listElement = document.getElementById("searchForm");
-	listElement.reset();
+	/*const listElement = document.getElementById("searchForm");*/
+
 
 	var form = document.getElementById('insertForm');
 	var formData = new FormData(form);
@@ -282,38 +294,33 @@ function loadDataAdd() {
 		mapDataAdd[data[0]] = data[1];
 	}
 	dataFilter = mapData;
+	console.log("mapdata: " + dataFilter.fullname);
+	loadDataInsert();
 	if (checkForm(false) == true) {
 		insertDataUser(mapDataAdd);
-		/*renderListUsers(pageNow);*/
+		alert("bạn đã thêm một user");
+
 	}
+
 
 	console.log("mapdata: " + mapData);
 	console.log("pageNow: " + pageNow);
-	console.log("mapdata: " + dataFilter.fullname);
-	/*	getDataSearch(1);
-	*/
 }
 
 function loadDataInsert() {
-	/*	e.preventDefault();*/
 	mapData = {};
 	var form = document.getElementById('searchForm');
 	var formData = new FormData(form);
 
 	for (var data of formData) {
 		mapData[data[0]] = data[1];
+		console.log("dataform: " + data[1]);
 	}
 	dataFilter = mapData;
 	console.log("mapdata: " + mapData);
 	console.log("pageNow: " + pageNow);
 	console.log("mapdata: " + dataFilter.fullname);
-	/*	getDataSearch(1);
-	*/
-	if (checkForm(false) == true) {
-		insertDataUser(mapDataAdd);
-		/*renderListUsers(pageNow);*/
-	}
-	/*renderListUsers(pageNow);*/
+	renderListUsers(pageNow);
 }
 function openAdd() {
 	const listElement = document.getElementById("popup1");
@@ -332,13 +339,15 @@ async function insertDataUser(datas) {
 	if (checkForm(false) == true) {
 		const listElement = document.getElementById("popup1");
 		listElement.style.display = 'none';
+
+
 	}
-	/*	$("#modalName").val(null);
-		$("#modalEmail").val(null);
-		$("#modalPassword").val(null);
-		$("#modalRepeatPassword").val(null);
-		$("#modalGroup").val(null);
-		$("#modalStatus").val(null);*/
+	$("#modalName").val(null);
+	$("#modalEmail").val(null);
+	$("#modalPassword").val(null);
+	$("#modalRepeatPassword").val(null);
+	$("#modalGroup").val(null);
+	$("#modalStatus").val(null);
 	/*renderListUsers(pageNow);*/
 
 }
@@ -359,6 +368,7 @@ async function changeInsert(nameUser, emailUser, passwordUser, group) {
 $("#addUserss").on('click', function(e) {
 	e.preventDefault();
 	openAdd();
+
 });
 
 
@@ -551,7 +561,7 @@ function renderListUsersPageNext() {
 		var number = parseInt(pageNow, 0);
 	console.log("page:" + typeof pageNow == 'number')
 	console.log("pageNext:" + number + 1)
-	renderListUsers(number+ 1);
+	renderListUsers(number + 1);
 }
 
 

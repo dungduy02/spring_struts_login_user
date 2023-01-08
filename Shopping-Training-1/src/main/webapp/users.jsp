@@ -122,7 +122,7 @@
 					</div>
 					<div class="col">
 						<div class="popup-item">
-							<label for="modalActive" class="input-group-texta">Trạng thái</label> 
+							<label for="modalActive" class="input-group-texta" style="width: 175px">Trạng thái</label> 
 								<select name="activeUser"
 								id="modalActive" class="form-control pr-5">
 								<option value="" selected>Chọn trạng thái</option>
@@ -242,10 +242,13 @@
 						</div>
 						<div>
 							<div class="input-group-prepend">
-								<a id="btnDeleteSearch" onclick="btnDeleteSearch();"
-									type="reset" href=""> <span
+								<a id="btnDeleteSearch"
+									type="reset" href="#"> 
+									<span
 									class="input-group-text colordelete"><i
-										class="fa fa-trash"></i>Xóa tìm</span></a>
+										class="fa fa-trash"></i>Xóa tìm
+									</span>
+								</a>
 							</div>
 						</div>
 					</div>
@@ -254,7 +257,7 @@
 			</div>
 		</form>
 		<div class="page-count">
-			<div class="page" id="pageLoad">
+			<div class="page pageLoad">
 				<ul style="display: flex;">
 					<li class=" page-item page-link zd statusPage heddinPage1"
 						onclick="renderListUsersPage();"><</li>
@@ -301,7 +304,7 @@
 
 		</div>
 		<div>
-			<div class="page" id="pageLoad">
+			<div class="page pageLoad">
 				<ul style="display: flex;">
 					<li class=" page-item page-link zd statusPage heddinPage1"
 						onclick="renderListUsersPage();"><</li>

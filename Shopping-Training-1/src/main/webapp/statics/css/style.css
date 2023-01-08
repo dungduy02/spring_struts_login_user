@@ -361,11 +361,13 @@ h1 {
    flex-direction: row-reverse;
 }
 .checkBtn button{
+	background: #ea4335;
    padding: 5px 20px;
    margin: 5px 20px;
    border: 1px;
 }
 .checkBtn #checkBtnSubmit{
+	background: #ea4335;
    padding: 5px 20px;
    margin: 5px 20px;
    border: 1px;
@@ -377,7 +379,9 @@ h1 {
    background: #ea4335;
 }
 
-
+.hidden{
+	display: none;
+}
 .listselect{
 	display: flex;
 	width: 191px;
