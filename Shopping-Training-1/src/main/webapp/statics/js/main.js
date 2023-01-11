@@ -1,30 +1,11 @@
-/**
- * 
- */
+
 let countPageMain;
 let dataFilter = { fullname: '', email: '', groups: '', active: '' };
-
-async function reloadChange() {
-	var data = await $.ajax({
-		type: 'GET',
-		url: 'getAllUser?' + 'fullname=' + fullname + '&email=' + email + '&group=' + group + "&active=" + active,
-
-		/*url: 'getAllUser',*/
-		/*data: 'fullname=' + fullname + 'email=' + email + 'groups=' + groups + "active=" + active,*/
-		success: function(data) {
-
-		},
-	});
-	countPageMain = data.length;
-	console.log("tổng số user:" + data.length);
-	return data;
-}
 function reloadPage() {
 	const reloadChanges = $('.changPageFor');
 	const pageLoad = $('.page-count');
 	let htmls = '';
 	let countresult;
-	console.log("countMain" + countPageMain)
 	if (countPageMain % 10 == 0) {
 		countresult = countPageMain / 10;
 		countresult = Math.floor(countresult);
@@ -33,13 +14,10 @@ function reloadPage() {
 		countresult = Math.floor(countresult);
 	}
 	if (countresult <= 1) {
-		console.log("số page = 1" + countresult)
 		pageLoad.addClass('hidden');
 	} else {
 		pageLoad.removeClass('hidden');
-		console.log("countMainREsult" + countresult)
-		for (let i = 1; i < countresult; i++) {
-			console.log("số page = khác 1" + countresult);
+		for (let i = 1; i <= countresult; i++) {
 			htmls += `<div class="changPage${i}">
 					<li class=" page-item page-link zd statusPage "
 						onclick="renderListUsers('${i}');">${i}
@@ -50,8 +28,6 @@ function reloadPage() {
 
 	reloadChanges.html(htmls);
 }
-/*const datachange = reloadChange();*/
-/*reloadPage();*/
 let pageNow;
 
 renderListUsers(1);
@@ -66,11 +42,6 @@ function loadData() {
 		mapData[data[0]] = data[1];
 	}
 	dataFilter = mapData;
-	console.log("mapdata: " + mapData);
-	console.log("pageNow: " + pageNow);
-	console.log("mapdata: " + dataFilter.fullname);
-	/*	getDataSearch(1);
-	*/
 	renderListUsers(1);
 }
 $('#btnSearch').on('click', loadData);
@@ -90,23 +61,15 @@ function setBackgroundPage(page) {
 	}
 }
 
-
 async function renderListUsers(page) {
-	console.log("page:" + page)
-	const data12 = await getDataUsers(page);
-	console.log("data12: " + data12);
-
-
-
+	const data12a = await getDataUsers(page);
+	const data12 = data12a[0];
+	console.log("data12:" + data12a[0]);
 	let count = 1;
-	console.log("count:" + count);
 	pageNow = page;
 
 	if (page != 1) {
-
-		console.log("pagepage:" + page);
 		count = (page - 1) * 10 + 1;
-		console.log("count_10:" + count);
 	}
 	const listElement = $('#listContent');
 	const statusPage = $('.statusPage');
@@ -114,26 +77,28 @@ async function renderListUsers(page) {
 	const changPage = $('.changPage' + page);
 	const reloadChanges = $('#numberUser');
 	fullname = dataFilter.fullname, email = dataFilter.email, group = dataFilter.groups, active = dataFilter.active;
-	const datachange = await reloadChange();
-	console.log("checklistUser:" + datachange.length);
-	/*for (i = 0; i < statusPage.length; i++) {
-
-		if (i == page) {
-			changPage.html(`<li class=" page-item page-link zd statusPage setBackground" 
-							onclick="renderListUsers('${i}');">${i}
-						</li>`)
-			break;
-		}
-	}*/
-
-	countPageMain = datachange.length;
-	console.log("countPageMain" + countPageMain);
+	/*const datachange = await reloadChange();*/
+	const datachange = data12a[1];
+	console.log("dataachange: " + datachange);
+	/*countPageMain = datachange.length;*/
+	countPageMain = data12a[1];
 	reloadPage();
 	setBackgroundPage(page);
+	var numberPage = countPageMain%10==0? countPageMain/10 : countPageMain/10+1;
+	var sotrang = parseInt(numberPage, 0);	
+	console.log("numberPage: " + sotrang);
+	if(sotrang != page){
+		console.log("xóa hover cuối trang: " + sotrang)
+		const pageLoad = $('.renderListUsersPageEnd');
+		pageLoad.removeClass('hiddenNoPage');
+	}else{
+		const pageLoad = $('.renderListUsersPageEnd');
+		pageLoad.addClass('hiddenNoPage');
+	}
 
 	reloadChanges.html(`<p>
 
-				Hiển thị từ ${count = 1 ? count : count + 1} ~ ${count == 1 ? ((count + 9) > datachange.length ? (count + (datachange.length % 10) - 1) : count + 9) : ((count + 9) > datachange.length ? (count + (datachange.length % 10) - 1) : count + 9)} trong tổng số ${datachange.length}
+				Hiển thị từ ${count = 1 ? count : count + 1} ~ ${count == 1 ? ((count + 9) > datachange ? (count + (datachange % 10) - 1) : count + 9) : ((count + 9) > datachange ? (count + (datachange % 10) - 1) : count + 9)} trong tổng số ${datachange}
 				user
 			</p>`)
 
@@ -153,14 +118,14 @@ async function renderListUsers(page) {
 	</button>
 	<button class="box trash">
 	
-		<a onclick="deleteUser('${item.id}', true);" href="#"> <i
+		<a onclick="deleteUser('${item.id}',' ${ item.email}' , true);" href="#"> <i
 			class="fa fa-trash"> </i> 
 		</a>
 		
 
 	</button>
 	<button class="box">
-		<a onclick="LockUnLockUser('${item.id}', true);" class="button" ><i class="fa fa-user-plus"></i></a>
+		<a onclick="LockUnLockUser('${item.id}',' ${ item.email}' , true);" class="button" ><i class="fa fa-user-plus"></i></a>
 	</button>
 </td>
 
@@ -169,7 +134,6 @@ async function renderListUsers(page) {
 		listElement.html(listContent);
 	}
 	count = 0;
-	console.log("count_10_end:" + count);
 
 }
 async function getDataUsers(page) {
@@ -182,7 +146,7 @@ async function getDataUsers(page) {
 		/*url: 'pages?' + 'page=' + page,*/
 		/* data: 'email=' + email,*/
 		success: function(data) {
-			console.log("dataPage: " + data);
+			console.log("dataGetDataPage: " + data);
 		},
 	});
 	return data;
@@ -190,9 +154,7 @@ async function getDataUsers(page) {
 
 
 //SEARCH
-/*var mapData = {};*/
 
-/*function btnDeleteSearch(){*/
 $('#btnDeleteSearch').on('click', function(e) {
 	e.preventDefault();
 	const listElement = document.getElementById("searchForm");
@@ -200,16 +162,14 @@ $('#btnDeleteSearch').on('click', function(e) {
 	dataFilter = { fullname: '', email: '', groups: '', active: '' };
 	renderListUsers(1);
 
-
-
 })
 /*}*/
 
 
 //DELETE
 
-function deleteUser(id, isSearch = false) {
-	var text = 'Bạn có muốn xoá thành viên có email: ' + id + ' không?';
+function deleteUser(id, email, isSearch = false) {
+	var text = 'Bạn chắc chắn muốn xoá thành viên có email: ' + email + ' không?';
 	/* var page = (id/10);*/
 	if (confirm(text) == true)
 		$.ajax({
@@ -217,8 +177,6 @@ function deleteUser(id, isSearch = false) {
 			url: 'deleteUser?',
 			data: 'id=' + id,
 			success: function(data) {
-				if (isSearch) console.log("sdfksdfjsdtttttttttttt");
-				else console.log("sdfksdfjsd");
 				$('#statusUser' + id).html('')
 				/* getDataUsers(0);*/
 				renderListUsers(pageNow);
@@ -227,12 +185,12 @@ function deleteUser(id, isSearch = false) {
 }
 
 //CẬP NHẬT TRẠNG THÁI
-function LockUnLockUser(id, isSearch = false) {
+function LockUnLockUser(id, email, isSearch = false) {
 	var text;
 
 	let active = $('#updateAcc' + id).attr("data-active");
 	if (active == "1") {
-		text = 'Bạn có muốn khóa thành viên có email: ' + id + ' không?';
+		text = 'Bạn chắc chắn muốn khóa user có email : ' + email + ' này?';
 		active = "0";
 		if (confirm(text) == true)
 			$.ajax({
@@ -240,18 +198,14 @@ function LockUnLockUser(id, isSearch = false) {
 				url: 'lockUnlockUser',
 				data: 'id=' + id + '&active=' + active,
 				success: function(data) {
-					if (isSearch) console.log("sdfksdfjsd3333333" + active);
-					else console.log("sdfksdfjsd");
 					if (active == "0") {
 						$('#updateAcc' + id).attr("data-active", active);
 						$('#updateAcc' + id).html('<p style="color: red">Tạm khóa</p> ')
 					}
-
-
 				},
 			});
 	} else {
-		text = 'Bạn có muốn mở khóa thành viên có email: ' + id + ' không?'
+		text = 'Bạn chắc chắn muốn mở khóa thành viên có email: ' + email + ' không?'
 		active = "1";
 		if (confirm(text) == true)
 			$.ajax({
@@ -259,8 +213,6 @@ function LockUnLockUser(id, isSearch = false) {
 				url: 'lockUnlockUser',
 				data: 'id=' + id + '&active=' + active,
 				success: function(data) {
-					if (isSearch) console.log("sdfksdfjsd33333334" + active);
-					else console.log("sdfksdfjsd");
 					if (active == "1") {
 						$('#updateAcc' + id).attr("data-active", active);
 						$('#updateAcc' + id).html('<p style="color: green">Đang hoạt động</p>')
@@ -282,9 +234,7 @@ function resetForm() {
 
 var mapDataAdd = {};
 function loadDataAdd() {
-	/*	e.preventDefault();*/
 	mapData = {};
-	/*const listElement = document.getElementById("searchForm");*/
 
 
 	var form = document.getElementById('insertForm');
@@ -294,17 +244,11 @@ function loadDataAdd() {
 		mapDataAdd[data[0]] = data[1];
 	}
 	dataFilter = mapData;
-	console.log("mapdata: " + dataFilter.fullname);
 	loadDataInsert();
 	if (checkForm(false) == true) {
 		insertDataUser(mapDataAdd);
-		alert("bạn đã thêm một user");
 
 	}
-
-
-	console.log("mapdata: " + mapData);
-	console.log("pageNow: " + pageNow);
 }
 
 function loadDataInsert() {
@@ -314,12 +258,8 @@ function loadDataInsert() {
 
 	for (var data of formData) {
 		mapData[data[0]] = data[1];
-		console.log("dataform: " + data[1]);
 	}
 	dataFilter = mapData;
-	console.log("mapdata: " + mapData);
-	console.log("pageNow: " + pageNow);
-	console.log("mapdata: " + dataFilter.fullname);
 	renderListUsers(pageNow);
 }
 function openAdd() {
@@ -328,19 +268,26 @@ function openAdd() {
 	$('#titlePopup').text(' Thêm User');
 	$('#edituser').html('<input name="id" id="modalId" style="display: none">');
 	$('#checkBtnSubmit').html('<a id="btnInsert" type="submit" class="btnSave">Lưu</a>');
+	
+	$("#modalName").val(null);
+	$("#modalEmail").val(null);
+	$("#modalPassword").val(null);
+	$("#modalRepeatPassword").val(null);
+	$("#modalGroup").val(null);
+	$("#modalActive").val(null);
 
 	$('#btnInsert').on('click', loadDataAdd);
 }
 
-
-
 async function insertDataUser(datas) {
-	const data = await changeInsert(datas.nameUser, datas.emailUser, datas.passwordUser, datas.group);
+	const data = await changeInsert(datas.nameUser, datas.emailUser, datas.passwordUser, datas.repeatPasswordUser, datas.group);
+	if(data == null){
+		alert("User đã tồn tại");
+	}else{
 	if (checkForm(false) == true) {
 		const listElement = document.getElementById("popup1");
 		listElement.style.display = 'none';
-
-
+		alert("Đã thêm một User");
 	}
 	$("#modalName").val(null);
 	$("#modalEmail").val(null);
@@ -348,17 +295,19 @@ async function insertDataUser(datas) {
 	$("#modalRepeatPassword").val(null);
 	$("#modalGroup").val(null);
 	$("#modalStatus").val(null);
+		
+	}
 	/*renderListUsers(pageNow);*/
-
 }
 
-async function changeInsert(nameUser, emailUser, passwordUser, group) {
+async function changeInsert(nameUser, emailUser, passwordUser, repeatPasswordUser, group) {
 	var data = await $.ajax({
 		type: 'POST',
 
-		url: 'addUser?' + 'nameUser=' + nameUser + '&emailUser=' + emailUser + '&passwordUser=' + passwordUser + '&group=' + group,
+		url: 'addUser?' + 'nameUser=' + nameUser + '&emailUser=' + emailUser + '&passwordUser=' + passwordUser + '&repeatPasswordUser=' + repeatPasswordUser + '&group=' + group,
 		success: function(data) {
 
+			/*alert("đã thêm một user");*/
 		},
 	});
 	return data;
@@ -371,15 +320,11 @@ $("#addUserss").on('click', function(e) {
 
 });
 
-
-
 //EDIT
-
 
 async function getUser(email) {
 	const listElement = document.getElementById("popup1");
 	listElement.style.display = 'block';
-	console.log("444444444444" + email);
 	var data = await $.ajax({
 		type: 'GET',
 		url: 'getUser?' + 'email=' + email,
@@ -415,7 +360,6 @@ function openEdit() {
 
 		for (var data of formData) {
 			mapDataAdd[data[0]] = data[1];
-			console.log("data" + data[1])
 		}
 		if (checkForm(false))
 			editDataUser(mapDataAdd);
@@ -456,12 +400,6 @@ async function changeEdit(nameUser, emailUser, passwordUser, repeatPasswordUser,
 		},
 	});
 	return data;
-}
-
-
-
-function capnhat() {
-	console.log("băt sư kiện ");
 }
 
 
@@ -538,13 +476,29 @@ function checkForm(checkinsert) {
 	return isValid;
 }
 
-function closePopupForm() {
+function closePopupForm(e) {
+	e.preventDefault();
 	$("#modalName").val(null);
 	$("#modalEmail").val(null);
 	$("#modalPassword").val(null);
 	$("#modalRepeatPassword").val(null);
 	$("#modalGroup").val(null);
+	console.log("pageNow:" + pageNow);
+	renderListUsers(pageNow);
 }
+
+/*$("#closeExit").submit('click', function(e) {
+	e.preventDefault();
+	$("#modalName").val(null);
+	$("#modalEmail").val(null);
+	$("#modalPassword").val(null);
+	$("#modalRepeatPassword").val(null);
+	$("#modalGroup").val(null);
+	console.log("pageNow:" + pageNow);
+	renderListUsers(pageNow);
+
+});*/
+
 
 function renderListUsersPage() {
 	if (pageNow != 1)
@@ -557,15 +511,26 @@ function renderListUsersPageNext() {
 	} else {
 		indexCount = countPageMain / 10 + 1;
 	}
-	if (pageNow < indexCount - 1)
-		var number = parseInt(pageNow, 0);
-	console.log("page:" + typeof pageNow == 'number')
-	console.log("pageNext:" + number + 1)
-	renderListUsers(number + 1);
+	var number
+	if (pageNow < indexCount - 1){
+		 number = parseInt(pageNow, 0);		
+		renderListUsers(number + 1);
+	}
+}
+function renderListUsersPageEnd(){
+	let indexCount;
+	if (countPageMain % 10 == 0) {
+		indexCount = countPageMain / 10;
+	} else {
+		indexCount = countPageMain / 10 + 1;
+	}
+	var number = parseInt(indexCount, 0);
+	renderListUsers(number);
 }
 
-
-
+function renderListUsersPageStart(){
+	renderListUsers(1);
+}
 
 
 var isUpdate = false;

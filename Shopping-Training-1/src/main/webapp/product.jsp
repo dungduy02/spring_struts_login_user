@@ -44,117 +44,6 @@
 	rel=“stylesheet”>
 </head>
 <body>
-
-	<div id="popup1" class="overlay">
-		<div class="popup">
-			<h2 id="titlePopup">Thêm User</h2>
-			<a id="closePopupForm" onclick="closePopupForm()" class="close"
-				href="#">&times;</a>
-
-
-			<s:form enctype="multipart/form-data" method="post" id="insertForm">
-				<div class="content">
-					<div class="col">
-						<div id="edituser">
-							<input name="id" id="modalId" type="text" style="display: none">
-						</div>
-
-						<div class="popup-item">
-							<label for="modalName" class="input-group-texta">Tên</label> <input
-								name="nameUser" type="text" class="" placeholder="Nhập họ tên"
-								id="modalName">
-						</div>
-						<!-- <label class="error" for="">Họ và tên không được để trống</label> -->
-						<%-- <s:if test="massage=='errorAccount'">
-							<div class="error" for="">Tài khoản của bạn chưa không hợp
-								lệ hoặc đã tồn tại</div>
-						</s:if> --%>
-						<div id="errorName" class="error" for=""></div>
-					</div>
-					<div class="col">
-						<div class="popup-item">
-							<label for="modalEmail" class="input-group-texta">Email</label> <input
-								name="emailUser" type="text" class="" placeholder="Nhập Emai"
-								id="modalEmail">
-						</div>
-						<%-- <s:if test="massage=='errorMail'">
-							<div class="error" for="">Email không đúng định dạng</div>
-						</s:if> --%>
-						<div id="errorEmail" class="error" for=""></div>
-					</div>
-					<div class="col">
-						<div class="popup-item">
-							<lable class="input-group-texta">Mật khẩu</lable>
-							<input name="passwordUser" type="password" class=""
-								placeholder="Mật khẩu" id="modalPassword">
-						</div>
-						<%-- <s:if test="massage=='errorPass'">
-							<div class="error" for="">Password không hợp lệ</div>
-						</s:if> --%>
-						<div id="errorPassword" class="error" for=""></div>
-					</div>
-					<div class="col">
-						<div class="popup-item">
-							<lable class="input-group-texta">Xác nhận</lable>
-							<input name="repeatPasswordUser" type="password" class=""
-								placeholder="Xác nhận mật khẩu" id="modalRepeatPassword">
-						</div>
-						<%-- <s:if test="massage=='errorPass'">
-							<div class="error" for="">Password không hợp lệ</div>
-						</s:if> --%>
-						<div id="errorRePassword" class="error" for=""></div>
-					</div>
-					<div class="col">
-						<div class="popup-item">
-
-							<label for="modalGroup" class="input-group-texta"
-								style="margin-right: 100px">Nhóm</label> <select name="group"
-								id="modalGroup" class="form-control pr-5">
-								<option value="" selected>Chọn nhóm</option>
-								<option value="ADMIN">ADMIN</option>
-								<option value="CUSTOMER">CUSTOMER</option>
-								<option value="SHOPPING">SHOPPING</option>
-								<option value="REVIEWER">REVIEWER</option>
-								<option value="EDITOR">EDITOR</option>
-							</select>
-
-						</div>
-						<label class="error display" for="">Họ và tên không được
-							để trống</label>
-					</div>
-					<div class="col">
-						<div class="popup-item">
-							<label for="modalActive" class="input-group-texta"
-								style="width: 175px">Trạng thái</label> <select
-								name="activeUser" id="modalActive" class="form-control pr-5">
-								<option value="" selected>Chọn trạng thái</option>
-								<option value="1" selected>Đang hoạt động</option>
-								<option value="0">Tạm khóa</option>
-							</select>
-						</div>
-					</div>
-					<div class="checkBtn">
-						<div id="checkBtnSubmit">
-							<a id=btnInsert type="submit" class="btnSave">LƯU</a>
-						</div>
-						<button type="button">
-							<a class="btnSave" href="#" id="closeExit"
-								onclick="closePopupForm()">HỦY</a>
-
-						</button>
-						<!-- <a id="btnInsert" type="submit" class="btnSave">LƯU</a> -->
-					</div>
-				</div>
-
-			</s:form>
-		</div>
-	</div>
-
-
-
-
-
-
 	<div class="container">
 		<div class="hearder">
 			<div class="header_right">
@@ -163,75 +52,81 @@
 				</div>
 				<div class="category">
 					<ul>
-						<li><a href="/product">Sản phẩm</a></li>
+						<li class="hoverCate"><a href="/product">Sản phẩm</a></li>
 						<li><a>Khách hàng</a></li>
-						<li class="hoverCate"><a>Users</a></li>
+						<li><a href="/user">Users</a></li>
 					</ul>
 				</div>
 			</div>
 			<div class="admin">
-				<span class="icon"><s:property value="#session.USER" /></span> <a
-					href="/logout"><i class="fa fa-sign-out"></i>LOGOUT</a>
+				<span class="icon">  <s:property value="#session.USER" />
+				</span> <a href="/logouts"><i class="fa fa-sign-out"></i>LOGOUT</a>
 			</div>
 		</div>
-		<div class="title">
-			<h3 style="text-align: left">
-				<a href="/user" class="infoUser" style="color: black;">Users</a>
+		<div class="title" style="border-bottom: 3px solid #9fc5e8; display: flex; justify-content: space-between;">
+			<h3 style="text-align: left; margin: 0;">
+				<a href="/product" class="infoProduct" style="color: black;">Danh sách sản phẩm</a>
 			</h3>
+			<p style="margin: auto 30px; color: blue;">
+				<a>Sản phẩm</a>
+			</p>
 		</div>
-		<form enctype="multipart/form-data" method="get" id="searchForm">
-			<div class="addUser">
-				<div class="formUser">
+		<form enctype="multipart/form-data" method="get" id="searchForm" style="margin: 20px 0 20px;">
+			<div class="addProduct" style="width: 80%;">
+				<div class="formUser" style="display: flex;">
 					<!--  <form class="formUser"> -->
-					<div>
+					<div class="itemForm">
 						<div class="input-group-prepend">
-							<span class="input-group-text1">Tên</span>
+							<span class="input-group-text1">Tên sản phẩm</span>
 						</div>
-						<input name="fullname" type="text" class="inputForm"
-							value="${fullname}" style="height: 30px"
-							placeholder="Nhập họ tên">
+						<input name="product_name" type="text" class="inputForm" id="modalName"
+							value="${product_name}" style="height: 30px"
+							placeholder="Nhập tên sản phẩm">
 					</div>
-					<div>
-						<div class="input-group-prepend">
-							<span class="input-group-text1">Email</span>
-						</div>
-						<input name="email" type="text" class="inputForm"
-							placeholder="Nhập Email" style="height: 30px" value="${email}">
-					</div>
-					<div>
-						<div class="listselect">
-							<label for="cars" class="input-group-text1">Nhóm</label> <select
-								name="groups" id="group" class="form-control pr-5">
-								<option value="${groups}" selected>Chọn nhóm</option>
-								<option value="ADMIN">ADMIN</option>
-								<option value="CUSTOMER">CUSTOMER</option>
-								<option value="SHOPPING">SHOPPING</option>
-								<option value="REVIEWER">REVIEWER</option>
-								<option value="EDITOR">EDITOR</option>
-							</select>
-						</div>
-
-					</div>
-					<div>
+					
+					<div class="itemForm">
 						<div class="listselect">
 
 							<label for="cars" class="input-group-text1">Trạng thái</label> <select
-								name="active" id="inputState" class="form-control pr-5">
-								<option value="${active}" selected>Chọn trạng thái</option>
-								<option value="0">Tạm khóa</option>
-								<option value="1">Đang hoạt động</option>
+								name="is_sales" class="form-control pr-5" id="modalIsSales">
+								<option value="${is_sales}" selected>Chọn trạng thái</option>
+								<option value="0">Đang bán</option>
+								<option value="1">Ngừng bán</option>
 							</select>
 						</div>
 
 					</div>
+					<div style="display: flex;" class="itemForm">
+
+						<div style="width: 50%">
+							<div class="input-group-prepend">
+								<span class="input-group-text1">Giá bán từ</span>
+							</div>
+							<input name="priceStart" type="text" class="inputForm" id="modalPriceStart"
+								placeholder="" style="height: 30px; width: 150px" value="0">
+						</div>
+						<div style="margin: auto 20px;">~</div>
+						<div style="width: 50%">
+							<div class="input-group-prepend">
+								<span class="input-group-text1">Giá bán đến</span>
+							</div>
+							<input name="priceEnd" type="text" class="inputForm" id="modalPriceEnd"
+								placeholder="" style="height: 30px; width: 150px" value="0">
+						</div>
+					</div>
 				</div>
+			
+			
+			
+			
+				
 				<!-- </form> -->
 			</div>
 			<div>
-				<div class="addNew formUser">
+				<div class="addNew formProduct" style="justify-content: space-between;">
 					<div>
 						<div class="input-group-prepend">
-							<a href="#popup1" onclick="openAdd()"> <span
+							<a href="#" onclick="openAddProduct()"> <span
 								class="input-group-text colorbtn"><i
 									class="fa fa-address-book"></i>Thêm mới</span></a>
 						</div>
@@ -257,16 +152,18 @@
 				</div>
 			</div>
 		</form>
+
+
 		<div class="page-count">
-			<div class="page pageLoad">
+			<div class="page">
 				<ul style="display: flex;">
 					<li class=" page-item page-link zd statusPage heddinPage1"
 						onclick="renderListUsersPageStart();">&lt&lt</li>
 					<li class=" page-item page-link zd statusPage heddinPage1"
 						onclick="renderListUsersPage();">&lt</li>
 					<div class="changPageFor">
-						<s:iterator begin="1"
-							end="list.size%10 == 0? (list.size/10) : ((list.size/10)+1)"
+						<%-- <s:iterator begin="1"
+							end="objectProduct[1]%10 == 0? (objectProduct[1]/10) : ((objectProduct[1]/10)+1)"
 							step="1" var="i">
 
 							<div class="changPage${i}">
@@ -274,21 +171,29 @@
 									onclick="renderListUsers('${i }');">${i }</li>
 							</div>
 
-						</s:iterator>
+						</s:iterator> --%>
+						
 					</div>
 					<li class=" page-item page-link zd statusPage heddinPage1 renderListUsersPageEnd"
 						onclick="renderListUsersPageNext();">&gt</li>
 					<li class=" page-item page-link zd statusPage heddinPage1 renderListUsersPageEnd"
 						onclick="renderListUsersPageEnd();">	&gt	&gt</li>
+						
 				</ul>
-
+						
+						
+					<!--  <li class=" page-item page-link zd statusPage heddinPage1"
+						onclick="renderListUsers(1);">1</li>
+					 <li class=" page-item page-link zd statusPage heddinPage1"
+						onclick="renderListUsers(2);">2</li>
+						<li class=" page-item page-link zd statusPage heddinPage1"
+						onclick="renderListUsers(3);">3</li>
+						<li class=" page-item page-link zd statusPage heddinPage1"
+						onclick="renderListUsers(4);">4</li>  -->
+			
 			</div>
 			<div class="textPage" id="numberUser">
-				<p>
-					Hiển thị từ 1 ~ 10 trong tổng số
-					<s:property value="list.size" />
-					user
-				</p>
+				<p>Hiển thị từ 1 ~ 10 trong tổng số 100 sản phẩm</p>
 			</div>
 		</div>
 		<div>
@@ -296,28 +201,29 @@
 				<thead>
 					<tr class="titleForm">
 						<th>#</th>
-						<th>Họ tên</th>
-						<th>Email</th>
-						<th>Nhóm</th>
-						<th>Trạng thái</th>
+						<th>Mã sản phẩm</th>
+						<th>Tên sản phẩm</th>
+						<th>Mô tả</th>
+						<th>Giá</th>
+						<th>Tình trạng</th>
 						<th></th>
 					</tr>
 				</thead>
 				<tbody id="listContent">
+					
 				</tbody>
 			</table>
-
 		</div>
 		<div class="page-count">
-			<div class="page pageLoad">
+			<div class="page">
 				<ul style="display: flex;">
 					<li class=" page-item page-link zd statusPage heddinPage1"
 						onclick="renderListUsersPageStart();">&lt&lt</li>
 					<li class=" page-item page-link zd statusPage heddinPage1"
 						onclick="renderListUsersPage();">&lt</li>
 					<div class="changPageFor">
-						<s:iterator begin="1"
-							end="list.size%10 == 0? (list.size/10) : ((list.size/10)+1)"
+						<%-- <s:iterator begin="1"
+							end="objectProduct[1]%10 == 0? (objectProduct[1]/10) : ((objectProduct[1]/10)+1)"
 							step="1" var="i">
 
 							<div class="changPage${i}">
@@ -325,30 +231,20 @@
 									onclick="renderListUsers('${i }');">${i }</li>
 							</div>
 
-						</s:iterator>
+						</s:iterator> --%>
+						
 					</div>
 					<li class=" page-item page-link zd statusPage heddinPage1 renderListUsersPageEnd"
 						onclick="renderListUsersPageNext();">&gt</li>
 					<li class=" page-item page-link zd statusPage heddinPage1 renderListUsersPageEnd"
 						onclick="renderListUsersPageEnd();">	&gt	&gt</li>
+						
 				</ul>
-
+			
 			</div>
 		</div>
 	</div>
-	<div id="popupDelete" class="overlay">
-		<div class="popup">
-			<h2>Bạn có chắc chắn muốn xóa User này</h2>
-			<a class="close" href="#">&times;</a>
-			<s:form action="/addUser" method="post">
-				<div class="content">
-					<input type="submit" on value="XÓA" /> <input type="submit"
-						value="HỦY BỎ">
-				</div>
 
-			</s:form>
-		</div>
-	</div>
 
 	<script
 		src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.2/jquery.min.js"
@@ -407,6 +303,6 @@
 		
 		 } */
 	</script>
-	<script type="text/javascript" src="../statics/js/main.js"></script>
+	<script type="text/javascript" src="../statics/js/product.js"></script>
 </body>
 </html>

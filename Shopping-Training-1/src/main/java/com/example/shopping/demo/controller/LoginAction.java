@@ -115,6 +115,7 @@ public class LoginAction extends ActionSupport implements SessionAware, Paramete
 	
 	public String checkLogin() {
 		if(checkCookie() != null) {
+			System.out.println("check cookie:");
 			return SUCCESS;
 		}
 		return "login";
@@ -122,8 +123,7 @@ public class LoginAction extends ActionSupport implements SessionAware, Paramete
 	
 //	@Override
 	public String proccessLogin() {
-
-
+		
 			if(!validate(uname)) {
 				this.massage = "errorMail";
 				return "ERROR";
@@ -181,8 +181,7 @@ public class LoginAction extends ActionSupport implements SessionAware, Paramete
 		
 	
 	private String checkCookie() {
-//		User use = null;
-//		String email = "";
+
 		if(request.getCookies() != null)
 		for(Cookie ck : request.getCookies()) {
 			if(ck.getName().equalsIgnoreCase("email")) {
@@ -190,9 +189,7 @@ public class LoginAction extends ActionSupport implements SessionAware, Paramete
 			}
 			
 		}
-//		if(!email.isEmpty() && !password.isEmpty()) {
-//			use = new User( email, password);
-//		}
+
 		return null;
 	}
 
@@ -258,17 +255,13 @@ public class LoginAction extends ActionSupport implements SessionAware, Paramete
 		if ( parameterName.contains("session")  || parameterName.contains("request") ) {
 		
 			allowedParameterName = false ;
-			
 		} 
-		
 		return allowedParameterName;
 	}
 
 	@Override
 	public void setSession(Map<String, Object> session) {
-		userSession = session ;
-
-		
+		userSession = session ;	
 	}
 	
 	protected HttpServletResponse response;

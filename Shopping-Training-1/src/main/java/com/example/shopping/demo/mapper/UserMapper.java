@@ -39,10 +39,10 @@ public interface UserMapper {
 	@Select("INSERT INTO `user`(usename, `name`, email, password, `group`, is_active, create_day, is_delete) values(#{name}, #{name}, #{email}, #{password}, #{group}, 1, CURRENT_TIMESTAMP(), 0)")
 	void insert(@Param("name") String name,@Param("email") String email, @Param("password") String password, @Param("group") String group);
 	
-	@Select("UPDATE `user` SET usename = #{name}, `name` = #{name}, email = #{email}, password = #{password}, `group` = #{group}, is_active = #{is_active}, create_day = CURRENT_TIMESTAMP(), is_delete = 0 WHERE  id = #{id}")
+	@Select("UPDATE `user` SET usename = #{name}, `name` = #{name}, email = #{email}, password = #{password}, `group` = #{group}, is_active = #{is_active}, is_delete = 0 WHERE  id = #{id}")
 	void editUser(@Param("name") String name,@Param("email") String email, @Param("password") String password, @Param("group") String group, @Param("is_active") String is_active, @Param("id") Long id);
 	
-	@Select("UPDATE `user` SET usename = #{name}, `name` = #{name}, email = #{email}, `group` = #{group}, is_active = #{is_active}, create_day = CURRENT_TIMESTAMP(), is_delete = 0 WHERE  id = #{id}")
+	@Select("UPDATE `user` SET usename = #{name}, `name` = #{name}, email = #{email}, `group` = #{group}, is_active = #{is_active}, is_delete = 0 WHERE  id = #{id}")
 	void editUserNoPass(@Param("name") String name,@Param("email") String email, @Param("group") String group, @Param("is_active") String is_active, @Param("id") Long id);
 	
 	

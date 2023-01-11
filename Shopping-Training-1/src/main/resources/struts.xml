@@ -7,6 +7,7 @@
 
 	<constant name="struts.devMode" value="true" />
 	<constant name="struts.objectFactory" value="spring" />
+ 	  <constant name="struts.action.extension" value=","/> 
 	
 
 
@@ -74,9 +75,9 @@
 		</action>
 		<!-- <action name="getByUser" class="com.example.shopping.demo.controller.UserAction" 
 			method="getByUser"> <result name="success">/login.jsp</result> </action> -->
-		<action name="login" class="com.example.shopping.demo.controller.LoginAction" >
-			<result name="success">/login.jsp</result>
-			<result name="ERROR">/login.jsp</result>
+		<action name="login" class="com.example.shopping.demo.controller.LoginAction" method="checkLogin" >
+			<result name="success" type="redirectAction">user</result>
+			<result name="login">/login.jsp</result>
 			
 		</action>
 		<action name="logout"
@@ -108,7 +109,8 @@
 			class="com.example.shopping.demo.controller.UserAction"
 			method="pageUser">
 			<result name="success" type="json">
-				<param name="root">users</param>
+				<!-- <param name="root">users</param> -->
+				<param name="root">object</param>
 			</result>
 
 		</action>
@@ -118,6 +120,76 @@
 			<result name="success" type="json">
 				<param name="root">user1</param>
 			</result>
+		</action>
+		
+		<action name="product"
+			class="com.example.shopping.demo.controller.LoginAction"
+			method="getAll">
+			<result name="success">/product.jsp</result>
+			<result name="login" type="redirectAction">login</result>
+			<result name="ERROR">/login.jsp</result>
+		</action>
+		
+		<action name="productDetail" class="com.example.shopping.demo.controller.ProductAction" method="productDetail">
+			<result name="SUCCESS">/productDetail.jsp</result>
+			<result name="ERROR">/productDetail.jsp</result>
+			
+				<!-- <param name="root">products</param> -->
+			
+				<!-- <result name="success" type="redirectAction">productDetail</result> -->
+		</action>
+		
+		<action name="pagesProduct"
+			class="com.example.shopping.demo.controller.ProductAction"
+			method="pageProduct">
+			<result name="success" type="json">
+				<!-- <param name="root">products</param> -->
+				<param name="root">objectProduct</param>
+			</result>
+
+		</action>
+		<action name="getAllProduct"
+			class="com.example.shopping.demo.controller.ProductAction"
+			method="getAllProduct">
+			<result name="success" type="json">
+				<param name="root">listProduct</param>
+			</result>
+			<!-- <result name="success">/users.jsp</result> -->
+		</action>
+		
+		<action name="deleteProduct"
+			class="com.example.shopping.demo.controller.ProductAction"
+			method="deleteProduct">
+			<result name="success" type="json">
+				<param name="root">products</param>
+			</result>
+		</action>
+		<action name="getProduct"
+			class="com.example.shopping.demo.controller.ProductAction"
+			method="getProductById">
+			<result name="success" type="json">
+				<param name="root">product</param>
+			</result>
+		</action>
+		
+		<action name="editProduct"
+			class="com.example.shopping.demo.controller.ProductAction"
+			method="editProduct">
+			<result name="success" type="json">
+				<param name="root">objectProduct</param>
+			</result>
+			<!-- <result name="success">/users.jsp</result>-->
+			<result name="ERROR">/users.jsp</result> 
+		</action>
+		<action name="addProduct"
+			class="com.example.shopping.demo.controller.ProductAction"
+			method="insertProduct">
+			<result name="success" type="redirectAction">user</result>
+			<!-- <result name="success" type="json">
+				<param name="root">objectProduct</param>
+			</result> -->
+			<!-- <result name="success">/users.jsp</result>-->
+			<result name="ERROR">/productDetail.jsp</result> 
 		</action>
 	</package>
 

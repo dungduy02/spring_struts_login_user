@@ -18,7 +18,7 @@
 
 
 .container {
-   width: 60%;
+   width: 80%;
    margin: 5% auto;
    height: 100%;
    align-content: center;
@@ -140,9 +140,15 @@ html{
 }
 .logo img{
    width: 100%;
+   height: 100%;
 }
 .category{
    display: flex;
+}
+
+.hoverCate{
+	background: red;
+	color: white;
 }
 .category ul{
 	height: 50px;
@@ -153,23 +159,41 @@ html{
 }
 
 .category ul li{
+	width: 100px;
    display: flex;
    margin: 5px 10px;
    list-style-type: none;
 }
-.category ul li:hover a{
+.category ul li a{
+	margin: auto;
+	color: #333333;
+}
+.category ul li a:hover{
+	color: white;
+	text-decoration: none;
+}
+.category ul li:hover{
    background: red;
    color: white;
 }
 .admin{
    margin: 5px 10px;
 }
-
+.admin a{
+	display: flex;
+}
+.admin a:hover{
+	text-decoration: none;
+}
 .formUser{
    display: flex;
    justify-content: space-between;
 }
 
+
+.itemForm{
+	margin: 0 10px;
+}
 .input-group-textƯ{
    display: none;
 }
@@ -190,6 +214,7 @@ html{
    justify-content: space-around;
 }
 .page{
+	margin-bottom: 10px;
    display: flex;
 }
 .zd{
@@ -212,7 +237,9 @@ html{
    color: limegreen;
 }
 
-
+.hiddenNoPage{
+	background: gray;
+}
 
 
 
@@ -430,3 +457,81 @@ h1 {
 #pageLoad{
 	margin-bottom: 10px;
 }
+
+
+
+
+/* ProductDetail */
+
+
+/* Product */ 
+.contentpro{
+   display: flex;
+   justify-content: space-between;
+   height: 400px;
+}
+
+#contentLeft{
+   width: 50%;
+}
+.itemInput{
+   margin: 10px 30px 10px 5px;
+   display: flex;
+   justify-content: space-between;
+}
+
+.itemInput input{
+   width: 70%;
+}
+
+#contentRight{
+   width: 50%;
+   height: 400px;
+}
+
+.imageProduct{
+   width: 300px;
+   height: 200px;
+   margin: auto;
+}
+
+.files{
+   margin: 20px auto;
+   text-align: center;
+}
+.files .upload{
+   border: 0;
+   color: wheat;
+   background: aquamarine;
+}
+
+.files .deleteImg{
+   border: 0;
+   color: wheat;
+   background: red;
+}
+
+#update{
+   text-align: end;
+   margin-right: 10%;
+}
+
+#update button{
+   margin: 5px 10px;
+   border: 0;
+   padding: 10px 20px;
+}
+
+#update #exit{
+   color: aqua;
+}
+#update #save{
+   color: wheat;
+   background: red;
+}
+
+
+
+
+
+
