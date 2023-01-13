@@ -3,7 +3,7 @@
  */
 
 const URL = 'http://localhost:8080';
- 
+
 let countPageMain;
 let dataFilter = { product_name: '', is_sales: '', priceStart: 0, priceEnd: 0 };
 
@@ -31,7 +31,7 @@ function reloadPage() {
 			console.log(countresult);
 			htmls += `<div class="changPage${i}">
 					<li class=" page-item page-link zd statusPage "
-						onclick="renderListUsers('${i}');">${i}
+						onclick="renderListProduct('${i}');">${i}
 					</li>
 				</div>`
 		}
@@ -41,10 +41,10 @@ function reloadPage() {
 }
 let pageNow;
 
-renderListUsers(1);
- 
- 
- function setBackgroundPage(page) {
+renderListProduct(1);
+
+
+function setBackgroundPage(page) {
 	const statusPage = $('.statusPage');
 	console.log("xét background: ")
 	const pageset = $('.statusPage');
@@ -54,17 +54,17 @@ renderListUsers(1);
 		if (i == page) {
 			console.log("hover bacground: ")
 			changPage.html(`<li class=" page-item page-link zd statusPage setBackground" 
-							onclick="renderListUsers('${i}');">${i}
+							onclick="renderListProduct('${i}');">${i}
 						</li>`)
 			break;
 		}
 	}
 }
- 
-async function renderListUsers(page) {
+
+async function renderListProduct(page) {
 	const data121 = await getDataUsers(page);
 	const data12 = data121[0];
-	
+
 
 	let count = 1;
 	pageNow = page;
@@ -81,19 +81,19 @@ async function renderListUsers(page) {
 	/*const datachange = await reloadChange();*/
 	const datachange = data121[1];
 
-	countPageMain =  data121[1];
+	countPageMain = data121[1];
 	/*countPageMain = datachange.length;*/
 	reloadPage();
 	setBackgroundPage(page);
-	
-	var numberPage = countPageMain%10==0? countPageMain/10 : countPageMain/10+1;
-	var sotrang = parseInt(numberPage, 0);	
+
+	var numberPage = countPageMain % 10 == 0 ? countPageMain / 10 : countPageMain / 10 + 1;
+	var sotrang = parseInt(numberPage, 0);
 	console.log("numberPage: " + sotrang);
-	if(sotrang != page){
+	if (sotrang != page) {
 		console.log("xóa hover cuối trang: " + sotrang)
 		const pageLoad = $('.renderListUsersPageEnd');
 		pageLoad.removeClass('hiddenNoPage');
-	}else{
+	} else {
 		const pageLoad = $('.renderListUsersPageEnd');
 		pageLoad.addClass('hiddenNoPage');
 	}
@@ -110,18 +110,26 @@ async function renderListUsers(page) {
 		const listContent = data12.map((item, index) => `
 <tr id="statusUser${item.id}">
 	<td>${count++}</td>
-	<td>${item.product_id}</td>
+	<td onmouseover="hoverImg(${index});" onmouseout="nohoverImg(${index})">${item.product_id}
+	<div class="hovers${index} hiddenImg" style="position: absolute; width: 100px; height: 100px; border:2px solid;"> 
+         <img src="${item.product_image}" alt="" style="width: 100%; height: 100%"/>
+    </div
+	</td>
+	
 	<td>${item.product_name}</td>
-	<td>${item.description}</td>
+	<td style="width: 500px;"> 
+		<div class="setLengthText">
+			${item.description}</td>
+		</div>
 	<td>${item.product_price}</td>
 	<td id="updateAcc${item.id}" data-active="${item.is_sales}" >${item.is_sales == "0" ? `<span  style="color: green">Đang bán</span>` : `<span style="color: red">Ngừng bán</span>`}</td>
 	<td>
 	<button class="box">
-		<a onclick="deleteUser('${item.product_id}'  class="button" href="productDetail?product_id=${item.product_id}"><i class="fa fa-pencil"></i></a>
+		<a  class="button" href="productDetail?product_id=${item.product_id}"><i class="fa fa-pencil"></i></a>
 	</button>
 	<button class="box trash">
 	
-		<a onclick="deleteUser('${item.product_id}',' ${ item.product_name}' , true);" href="#"> <i
+		<a onclick="deleteUser('${item.product_id}',' ${item.product_name}' , true);" href="#"> <i
 			class="fa fa-trash"> </i> 
 		</a>
 		
@@ -169,10 +177,12 @@ function loadData() {
 	}
 	dataFilter = mapData;
 	console.log(dataFilter.product_name);
-	if(dataFilter.priceStart > dataFilter.priceEnd){
+		const start = new Number(dataFilter.priceStart);
+		const end = new Number(dataFilter.priceEnd);
+	if (start > end) {
 		alert("Bạn phải nhập 'giá bán từ' thấp hơn 'giá bán đến'");
-	}else{
-		renderListUsers(1);
+	} else {
+		renderListProduct(1);
 	}
 }
 $('#btnSearch').on('click', loadData);
@@ -190,7 +200,7 @@ function deleteUser(product_id, product_name, isSearch = false) {
 			success: function(data) {
 				/*$('#statusUser' + id).html('')*/
 				/* getDataUsers(0);*/
-				renderListUsers(pageNow);
+				renderListProduct(pageNow);
 			},
 		});
 }
@@ -200,8 +210,8 @@ $('#btnDeleteSearch').on('click', function(e) {
 	const listElement = document.getElementById("searchForm");
 	console.log("Xóa form");
 	listElement.reset();
-	dataFilter = { product_name: '', is_sales: '', priceStart : 0, priceEnd: 0 };
-	renderListUsers(1);
+	dataFilter = { product_name: '', is_sales: '', priceStart: 0, priceEnd: 0 };
+	renderListProduct(1);
 
 })
 
@@ -210,25 +220,37 @@ $('#btnDeleteSearch').on('click', function(e) {
 /*Edit Product */
 /*Upload Image*/
 function chosseFile(fileInput) {
-            if(fileInput.files && fileInput.files[0]){
-               var reader = new FileReader();
+	console.log(fileInput.value);
+	$('#nameFile').val(fileInput.value);
+	if (fileInput.files && fileInput.files[0]) {
+		var reader = new FileReader();
 
-               reader.onload = function (e) {
-                  $('#display_image').attr('src', e.target.result);
-               }
-               reader.readAsDataURL(fileInput.files[0]); 
-            }
-            
-         }
+		reader.onload = function(e) {
 
-         
-     function openAddProduct(){
-		 window.location= URL +"/productDetail";
-	 }
-         
+			$('#display_image').attr('src', e.target.result);
+			/* var images = $('#display_image').attr('src');
+             $('#product_image').val('"' + images + '"');*/
+		}
+		reader.readAsDataURL(fileInput.files[0]);
+	}
+
+}
+
+function deleteFile(){
+	$('#display_image').attr('src', "");
+}
+
+function openAddProduct() {
+	/* window.location= URL +"/productDetail";*/
+	$('#titleDetail').text(' Thêm sản phẩm');
+	$('#btnForm').html('<a id="save" type="submit" >LƯU</a>')
+	$('#titlePage').html('<a style="margin: 0 10px;">Sản phẩm</a> &gt <div style="margin: 0 10px;"> Thêm sản phẩm </div>')
+
 	$('#save').on('click', loadDataAdd);
-	
-	function loadDataAdd() {
+}
+
+
+function loadDataAdd() {
 	mapData = {};
 
 
@@ -243,7 +265,7 @@ function chosseFile(fileInput) {
 	console.log('dataFilter' + dataFilter);
 	loadDataInsert();
 	if (checkForm(false) == true) {
-	console.log('check' );
+		console.log('check');
 		insertDataProduct(mapData);
 	}
 }
@@ -263,16 +285,24 @@ function loadDataInsert() {
 
 async function insertDataProduct(datas) {
 	console.log("insertDataProduct" + datas)
+	console.log(typeof datas.product_price);
+	//
+	console.log("product_image" + datas.prduct_image);
+	
+	//
 	const data = await changeInsert(datas.product_name, datas.product_price, datas.description, datas.is_sales);
-	if(data == null){
+
+	console.log("insertDataProductChang" + data)
+	if (data != null) {
 		alert("Product đã tồn tại");
-	}else{
-	if (checkForm(false) == true) {
-		/*const listElement = document.getElementById("popup1");
-		listElement.style.display = 'none';*/
-		alert("Đã thêm một Product");
-		window.location= URL +"/product";
-		
+	} else {
+		if (checkForm(false) == true) {
+			/*const listElement = document.getElementById("popup1");
+			listElement.style.display = 'none';*/
+			alert("Đã thêm một Product");
+			window.location = URL + "/product";
+
+		}
 	}
 	/*$("#modalName").val(null);
 	$("#modalEmail").val(null);
@@ -280,8 +310,7 @@ async function insertDataProduct(datas) {
 	$("#modalRepeatPassword").val(null);
 	$("#modalGroup").val(null);
 	$("#modalStatus").val(null);*/
-		
-	}
+
 	/*renderListUsers(pageNow);*/
 }
 
@@ -291,7 +320,7 @@ async function changeInsert(product_name, product_price, description, is_sales) 
 
 		url: 'addProduct?' + 'product_name=' + product_name + '&product_price=' + product_price + '&description=' + description + '&is_sales=' + is_sales,
 		success: function(data) {
-		console.log("dataProduct:" + data);
+			console.log("dataProduct:" + data);
 			/*alert("đã thêm một user");*/
 		},
 	});
@@ -307,30 +336,95 @@ async function productDetail(product_id) {
 	/*openEdit();*/
 }
 
-async function transmissionData(product_id){
-/*	$('#titleDetail').text(' Chi tiết sản phẩm');*/
-/*	$('#checkBtnSubmit').html('<a id="btnEdit" type="submit" class="btnSave">CẬP NHẬT</a>');*/
-	let product = await getProduct(product_id);
-	console.log("test chạy: " );
-	console.log("test chạy: " + product.product_id);
-	$('#modalProductName').val(product.product_name);
-	$('#modalProductPrice').val(product.product_price);
-	$('#modalDescription').val(product.description);
-	$('#modalIsSales').val(product.is_sales);
+async function transmissionData(product_id) {
+	let productOne = await getProduct(product_id);
+	console.log("nhận id: ")
+	console.log("nhận id với Id: " + product_id)
+	$('#titleDetail').text(' Chi tiết sản phẩm');
+	$('#editProduct').html('<input name="product_id" id="modalProductId" style="display: none">');
+	$('#btnForm').html('<a id="btnUpdate" type="submit" >LƯU</a>');
+	$('#titlePage').html('<a style="margin: 0 10px;">Sản phẩm</a> &gt <div style="margin: 0 10px;"> Chi tiết sản phẩm </div>');
+	$('.richText-editor').html(`<div>${productOne.description}<div>`);
+	/*$('.richText-editor').text(`${productOne.description}`);*/
+	console.log("test chạy: ");
+	console.log("test chạy product name: " + productOne.description);
+	$('#modalProductId').val(productOne.product_id);
+	$('#modalProductName').val(productOne.product_name);
+	$('#modalProductPrice').val(productOne.product_price);
+	$('#modalDescription').val(productOne.description);
+	$('#modalIsSales').val(productOne.is_sales);
+
+	$('#btnUpdate').on('click', loadDataUpdate);
 }
 
 
 async function getProduct(product_id) {
+	console.log("getProduct: ")
+	console.log("getProduct có Id: " + product_id)
 	var data = await $.ajax({
 		type: 'GET',
 		url: 'getProduct?' + 'product_id=' + product_id,
 		success: function(data) {
+			console.log("dataProductProduct: ");
 			console.log("dataProduct: " + data);
 		},
 	});
 	return data;
 }
 
+
+function loadDataUpdate() {
+	mapData = {};
+
+
+	var form = document.getElementById('FormProduct');
+	var formData = new FormData(form);
+
+	for (var data of formData) {
+		mapData[data[0]] = data[1];
+		console.log("mapData[]" + data[1])
+	}
+	dataFilter = mapData;
+	console.log('dataFilter' + dataFilter);
+	loadDataInsert();
+	if (checkForm(false) == true) {
+		console.log('check');
+		updateDataProduct(mapData);
+	}
+}
+
+async function updateDataProduct(datas) {
+	console.log("updateDataProduct" + datas)
+	const data = await changeUpdate(datas.product_name, datas.product_price, datas.description, datas.is_sales, datas.product_id);
+	console.log("DataUpdate: " + data);
+	console.log("DataUpdateId0: " + data.product_id);
+	if (data == null) {
+		alert("Bạn không thay đổi thông tin gì");
+	} else {
+		if (checkForm(false) == true) {
+			/*const listElement = document.getElementById("popup1");
+			listElement.style.display = 'none';*/
+			alert("Đã update thành công");
+			window.location = URL + "/product";
+
+		}
+
+	}
+	/*renderListUsers(pageNow);*/
+}
+
+async function changeUpdate(product_name, product_price, description, is_sales, product_id) {
+	var data = await $.ajax({
+		type: 'POST',
+
+		url: 'updateProduct?' + 'product_name=' + product_name + '&product_price=' + product_price + '&description=' + description + '&is_sales=' + is_sales + '&product_id=' + product_id,
+		success: function(data) {
+			/*console.log("dataProduct:" + data);*/
+			/*alert("đã thêm một user");*/
+		},
+	});
+	return data;
+}
 
 function changeNotify(element, data) {
 	element.html(data);
@@ -340,16 +434,18 @@ function checkForm(checkinsert) {
 	let isValid = true;
 	var errorName = $('#errorName');
 	var errorPrice = $('#errorPrice');
-	
+	var errorIs_sales = $('#errorIs_sales');
+
 	changeNotify(errorName, '');
 	changeNotify(errorPrice, '');
-	
+	changeNotify(errorIs_sales, '');
+
 
 	var form = document.getElementById('FormProduct');
 	var formData = new FormData(form);
-/*
-	var regexMail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-	var regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/;*/
+	/*
+		var regexMail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+		var regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/;*/
 	for (var data of formData) {
 		mapData[data[0]] = data[1];
 	}
@@ -359,22 +455,30 @@ function checkForm(checkinsert) {
 	if (mapData.product_name.length == 0) {
 		changeNotify(errorName, 'Tên sản phẩm không được để trống');
 		isValid = false;
-	} 
+	}
+	if(mapData.product_name.length <= 5){
+		changeNotify(errorName, 'Tên sản phẩm phải lớn hơn 5 ký tự');
+		isValid = false;
+	}
 	if (mapData.product_price.length == 0) {
 		changeNotify(errorPrice, 'Giá bán không được nhỏ hơn 0');
 		isValid = false;
-	} 
+	}
+	if (mapData.is_sales.length == 0) {
+		changeNotify(errorPrice, 'Trạng thá không được để trống');
+		isValid = false;
+	}
 
 	return isValid;
 }
-	
-	
-function renderListUsersPageStart(){
-	renderListUsers(1);
+
+
+function renderListUsersPageStart() {
+	renderListProduct(1);
 }
 function renderListUsersPage() {
 	if (pageNow != 1)
-		renderListUsers(pageNow - 1);
+		renderListProduct(pageNow - 1);
 }
 function renderListUsersPageNext() {
 	let indexCount;
@@ -383,12 +487,12 @@ function renderListUsersPageNext() {
 	} else {
 		indexCount = countPageMain / 10 + 1;
 	}
-	if (pageNow < indexCount - 1){
-		 number = parseInt(pageNow, 0);		
-		renderListUsers(number + 1);
+	if (pageNow < indexCount - 1) {
+		number = parseInt(pageNow, 0);
+		renderListProduct(number + 1);
 	}
 }
-function renderListUsersPageEnd(){
+function renderListUsersPageEnd() {
 	let indexCount;
 	if (countPageMain % 10 == 0) {
 		indexCount = countPageMain / 10;
@@ -396,27 +500,68 @@ function renderListUsersPageEnd(){
 		indexCount = countPageMain / 10 + 1;
 	}
 	var number = parseInt(indexCount, 0);
-	renderListUsers(number);
+	renderListProduct(number);
 }
 
-loadDataDetail();
-	
-function getParameterByName(name, url) {
-    if (!url) url = window.location.href;
-    name = name.replace(/[\[\]]/g, '\\$&');
-    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-        results = regex.exec(url);
-    if (!results) return null;
-    if (!results[2]) return '';
-    return decodeURIComponent(results[2].replace(/\+/g, ' '));
-}	
 
-function loadDataDetail()	{
+function getParameterByName(name, url) {
+	if (!url) url = window.location.href;
+	name = name.replace(/[\[\]]/g, '\\$&');
+	var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+		results = regex.exec(url);
+	if (!results) return null;
+	if (!results[2]) return '';
+	return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+loadPage(1);
+function loadPage(indexLoad){
+	if(indexLoad == 1){
+		loadDataDetail();
+		loadPage(2);
+	}else{
+	loadDataDetail();
+	}
+}
+function loadDataDetail() {
 	var urlDetail = window.location.href;
 	console.log("url: " + urlDetail)
 	var productDetail_id = getParameterByName('product_id', urlDetail)
 	console.log("productDetail_id" + productDetail_id);
 	
-	transmissionData(productDetail_id)
+	if (productDetail_id != null) {
+		transmissionData(productDetail_id);
+		
+	}
+	if (urlDetail === URL + '/productDetail'){		
+		openAddProduct();
+		indexLoad = 1;
+	}
+
+}
+
+function hoverImg(index) {
+	for(let i = 0 ; i <10 ; i++){
+		if(i == index){
+		console.log("hover vào");
+		const hoverImges = $('.hovers' + index);
+		hoverImges.removeClass('hiddenImg');
+			
+		}
+	}
+}
+function nohoverImg(index) {
+	for(let i = 0 ; i <10 ; i++){
+		if(i == index){
+		console.log("không hover vào");
+		const hoverImges = $('.hovers' + index);
+		hoverImges.addClass('hiddenImg');
+			
+		}
+	}
 	
 }
+/*$(document).ready(function(){
+	$('#modalDescription').richText();
+	
+});*/
+

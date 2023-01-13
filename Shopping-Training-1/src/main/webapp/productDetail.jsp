@@ -3,7 +3,8 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
 
 <!DOCTYPE html>
-<html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="ISO-8859-1">
 <meta charset="UTF-8">
@@ -33,8 +34,17 @@
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.2/united/bootstrap.min.css"/>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"/>
+<script src="https://code.jquery.com/jquery-2.0.0.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.6.2/summernote.min.css">
 
 <title>Quản lý User</title>
+<!--  <link rel="stylesheet" th:href="@{../statics/richtext/richtext.min.css}">
+ <link rel="stylesheet" th:href="@{../statics/richtext/jquery.richtext.min.js}"> -->
+ <link rel="stylesheet" href="../statics/richtext/richtext.min.css" />
+
 <!-- <link href="https://unpkg.com/bootstrap-table@1.21.2/dist/bootstrap-table.min.css" rel="stylesheet"> -->
 
 <script
@@ -42,8 +52,14 @@
 <link
 	href=“https://fonts.googleapis.com/css?family=Hammersmith+One&display=swap”
 	rel=“stylesheet”>
+ <script src="../statics/richtext/jquery.richtext.min.js"></script>
+ <style type="text/css">
+ 	.table th, .table td{
+ 		max-width: 400px;
+ 	}
+ </style>
 </head>
-<body>
+<body style="height: 100%; margin-bottom: 200px;">
 	<div class="container">
 		<div class="hearder">
 			<div class="header_right">
@@ -52,28 +68,35 @@
 				</div>
 				<div class="category">
 					<ul>
-						<li class="hoverCate"><a href="/product">Sản phẩm</a></li>
+						<li class="hoverCate"><a href="/product" style="color: white;">Sản phẩm</a></li>
 						<li><a>Khách hàng</a></li>
 						<li><a href="/user">Users</a></li>
 					</ul>
 				</div>
 			</div>
 			<div class="admin">
-				<span class="icon"> <!-- <s:property value="#session.Product" /> -->
-				</span> <a href="/logouts"><i class="fa fa-sign-out"></i>LOGOUT</a>
+				<span class="icon"><s:property value="#session.USER" /></span> <a style="color: #0088cc"
+					href="/logout"><i class="fa fa-sign-out"></i>LOGOUT</a>
 			</div>
 		</div>
-		<div class="title">
-         <h3 style="text-align: left">
-            <a id="titleDetail" href="/user" class="infoUser" style="color: black;">Thêm sản phẩm</a>
-         </h3>
-      </div>
-		
+		<div class="title"
+			style="display: flex; justify-content: space-between;">
+			<h3 style="text-align: left">
+				<a id="titleDetail" href="/user" class="infoUser"
+					style="color: black;">Thêm sản phẩm</a>
+			</h3>
+			<p id="titlePage"
+				style="margin: auto 30px; color: blue; display: flex;">
+				<a>Sản phẩm</a>
+			</p>
+		</div>
+
 		<form enctype="multipart/form-data" method="get" id="FormProduct">
 			<div>
 
 				<div class="contentpro">
 					<div id="contentLeft">
+						<div id="editProduct"></div>
 						<div class="itemInput">
 							<div class="input-group-prepend">
 								<span class="input-group-text1">Tên sản phẩm</span>
@@ -87,7 +110,7 @@
 							<div class="input-group-prepend">
 								<span class="input-group-text1">Giá bán</span>
 							</div>
-							<input name="product_price" id="modalProductPrice" type="text"
+							<input name="product_price" id="modalProductPrice" type="number"
 								class="inputForm" style="height: 30px"
 								placeholder="Nhập giá bán">
 						</div>
@@ -96,12 +119,25 @@
 							<div class="input-group-prepend">
 								<span class="input-group-text1">Mô tả</span>
 							</div>
-							<textarea rows="10" cols="100" id="modalDescription"
-								name="description" type="text" class="inputForm" 
-								style="width: 70%; height: 150px" placeholder="Mô tả sản phẩm"></textarea>
+							<div id="textDescription" style="width: 370px;">		
+							<textarea  type="text" id="modalDescription" class="modalDescription" name="description" placeholder="Mô tả sản phẩm">
+								
+							</textarea>
+							</div>
+							<!-- <textarea rows="10" cols="100" id="modalDescription" class="defaultsummernote"
+							name="description" type="text" class="inputForm"
+								style="width: 70%; height: 150px" placeholder="Mô tả sản phẩm"
+							> Dummy Text </textarea>
+							<div class="btn-container"> -->
+							
+							
+							 <!-- <textarea rows="10" cols="100" id="modalDescription"
+								name="description" type="text" class="inputForm"
+								style="width: 70%; height: 150px" placeholder="Mô tả sản phẩm"></textarea> -->
 						</div>
+						<div id="errorIs_sales" class="error" for=""></div>
 						<div class="itemInput">
-
+							
 							<label for="cars" class="input-group-text1"
 								style="margin-bottom: 0px; width: 30%;">Trạng thái</label> <select
 								name="is_sales" style="width: 70%;" id="modalIsSales"
@@ -111,36 +147,48 @@
 								<option value="1">Đóng</option>
 							</select>
 						</div>
+						
 					</div>
 					<div id="contentRight">
 						<div style="color: red;">
 							<p>Hình ảnh</p>
 						</div>
-						<div class="imageProduct">
-							<img id="display_image" class="imageProduct"> </img>
+						<img id="display_image" class="imageProduct" src="../statics/img/image.png"> </img>
+						<div class="files" style="display: flex;">
+							<div
+								style="margin: 0 10px; padding: 0px 11px; color: white; background: aqua; border-radius: 4px;">
+								<label for="file">Upload</label>
+							</div>
+							<button type="" class="deleteImg" onclick="deleteFile()">Xóa file</button>
+							<input id="nameFile" type="" name="" value=""
+								placeholder="tên file upload">
 						</div>
-						<div class="files">
-							<input onchange="chosseFile(this)" class="upload" type="file"
-								id="image_input" accept="image/png, image/jpg" />
-
-							<button type="" class="deleteImg">Xóa file</button>
-							<input type="" name="" value="" placeholder="tên file upload">
-						</div>
+						<input style="visibility: hidden;" onchange="chosseFile(this)"
+							class="upload" type="file" id="file"
+							accept="image/png, image/jpg" />
+						<!-- <input type="text" id="product_image" value="" name="product_image" /> -->
 					</div>
 				</div>
-				<div id="update">
-					<button id="exit">HỦY</button>
-					<a id="save" type="submit">LƯU</a>
+				<div id="update"
+					style="text-align: end; margin-right: 10%; display: flex; flex-direction: row-reverse;">
+					<div class="btnForm" id="btnForm"
+						style="background: red; margin: 5px 10px; border: 0; border-radius: 3px">
+						<a id="save" type="submit">LƯU</a>
+
+					</div>
+					<a style=" margin: 5px 10px; border: 0; padding: 10px 20px; color: #000aff;" href="/product" id="exit">HỦY</a>
 				</div>
 			</div>
 		</form>
 
 
-		
-		
-		
+	
 	</div>
 
+	<script type="text/javascript">
+		$('#modalDescription').richText();
+		
+	</script>
 
 	<script
 		src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.2/jquery.min.js"

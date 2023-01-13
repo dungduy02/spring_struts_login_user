@@ -28,6 +28,7 @@ public class ProductAction extends ActionSupport {
 	private String product_id;
 	private String product_name;
 	private double product_price;
+	private String product_image;
 	private String is_sales;
 	private String description;
 	private double priceStart;
@@ -40,6 +41,14 @@ public class ProductAction extends ActionSupport {
 	
 	
 	
+	public String getProduct_image() {
+		return product_image;
+	}
+
+	public void setProduct_image(String product_image) {
+		this.product_image = product_image;
+	}
+
 	public Product getProduct() {
 		return product;
 	}
@@ -165,13 +174,10 @@ public class ProductAction extends ActionSupport {
 	}
 
 	public String getAllProduct() {
-
-		products = productMapper.getByProductList(product_name, is_sales, getPriceStart(), getPriceEnd());
+		String product_nameNew = getProduct_name().trim();
+		products = productMapper.getByProductList(product_nameNew, getIs_sales(), getPriceStart(), getPriceEnd());
 
 		this.listProduct = products;
-
-//        list = productMapper.getByUsersList(fullname, email, getGroup(), getActive());
-//        this.list = list;
 		LOG.info("Listing persons");
 		return SUCCESS;
 	}
@@ -179,15 +185,17 @@ public class ProductAction extends ActionSupport {
 	public String pageProduct() {
 		int total ;
 		List<Product> nextList;
-		
-		nextList = productMapper.getByProduct(product_name, is_sales, getPriceStart(), getPriceEnd());
+		System.out.println("giá từ" +getPriceStart());
+		System.out.println("giá đến" +getPriceEnd());
+		String product_nameNew = getProduct_name().trim();
+		nextList = productMapper.getByProduct(product_nameNew, is_sales, getPriceStart(), getPriceEnd());
 		double numberEnd;
 		if(getPriceEnd() ==0) {
 			numberEnd  = productMapper.maxPrice();
 		}else {
 			numberEnd = getPriceEnd();
 		}
-		total = productMapper.getByProductList(product_name, is_sales, getPriceStart(), numberEnd).size();
+		total = productMapper.getByProductList(product_nameNew, is_sales, getPriceStart(), numberEnd).size();
 		
 		if (getPriceEnd() < getPriceStart()) {
 			System.out.println("lỗi giá nhỏ hơn");
@@ -196,7 +204,7 @@ public class ProductAction extends ActionSupport {
 				
 				if (getPage() == 1) {
 				
-					nextList = productMapper.getByProduct(product_name, is_sales, getPriceStart(), numberEnd);
+					nextList = productMapper.getByProduct(product_nameNew, is_sales, getPriceStart(), numberEnd);
 //        	 list = userMapper.getAll();
 //             this.list = list;
 
@@ -205,7 +213,7 @@ public class ProductAction extends ActionSupport {
 					objectProduct.add(total);
 				} 
 			 else {
-				nextList = productMapper.getByProductNext(product_name, is_sales, getPriceStart(), numberEnd,
+				nextList = productMapper.getByProductNext(product_nameNew, is_sales, getPriceStart(), numberEnd,
 						(getPage() - 1) * 10);
 				System.out.println("dữ liệu trang tiêp theo:" + nextList);
 				System.out.println("dữ liệu trang tiêp theo:" + nextList.size());
@@ -233,25 +241,56 @@ public class ProductAction extends ActionSupport {
 	public String insertProduct() {
 		
 		System.out.println("product_name:" + getProduct_name());
-		Product p = productMapper.getOneProduct(getProduct_name());
+		System.out.println("product_name_is_sales:" + getIs_sales());
+		int setSales = Integer.parseInt(getIs_sales());
+		System.out.println("setSales: " + setSales);
+		Product p = productMapper.getOneProduct(getProduct_name().trim());
 		System.out.println("sản phẩm: " + p);
 		int number = productMapper.createId() + 1;;
 		char indexName = getProduct_name().charAt(0);
-		String indexProduct  = Character.toString(indexName);
-		System.out.println("indexName:" + indexName);
+		String indexProduct  = Character.toString(indexName).toUpperCase();
+		System.out.println("indexName:" + indexProduct);
 //		String numberId = productMapper.fomatNumberId(number);
 		System.out.println("number:" + number);
 		if(p == null) {
 			System.out.println("tiến hành insert:");
-			productMapper.insert(indexProduct,number ,getProduct_name(), getProduct_price(), getDescription(), getIs_sales());
+			productMapper.insert(indexProduct,number ,getProduct_name(), getProduct_price(), getDescription(), setSales);
 			System.out.println("insert Thành công: ");
+			product = null;
+			return SUCCESS;
 		}else {
 			System.out.println("insert thất bại: ");
-			return "ERROR";
+			product = p;
+			return SUCCESS;
 		}
 			
 			
-			return SUCCESS;
+	}
+	public String updateProduct() {
+		
+		System.out.println("product_name_id:" + getProduct_id());
+		System.out.println("product_name:" + getProduct_name());
+		System.out.println("product_name_is_sales:" + getIs_sales());
+		int setSales = Integer.parseInt(getIs_sales());
+//		double PriceProduct = Double.parseDouble(getProduct_price());
+		System.out.println("setSales: " + setSales);
+		Product p = productMapper.getByProductId(getProduct_id());
+	
+//		if(getProduct_name().equalsIgnoreCase(p.getProduct_name()) && (getProduct_price() == p.getProduct_price())	&& getDescription().equalsIgnoreCase(p.getDescription()) && getIs_sales().equalsIgnoreCase(p.getIs_sales())) {
+//			return SUCCESS;
+//		}
+//		else {
+			System.out.println("tiến hành Update:");
+			productMapper.updateProduct(getProduct_name(), getProduct_price(), getDescription(), getIs_sales(), getProduct_id());
+			System.out.println("Update Thành công: ");
+//		}
+//		else {
+//			System.out.println("insert thất bại: ");
+//			return "ERROR";
+//		}
+		
+		
+		return SUCCESS;
 	}
 
 	 public String getProductById() {

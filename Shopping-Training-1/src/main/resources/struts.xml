@@ -184,11 +184,16 @@
 		<action name="addProduct"
 			class="com.example.shopping.demo.controller.ProductAction"
 			method="insertProduct">
-			<result name="success" type="redirectAction">user</result>
-			<!-- <result name="success" type="json">
-				<param name="root">objectProduct</param>
-			</result> -->
-			<!-- <result name="success">/users.jsp</result>-->
+			<result name="success" type="json">
+				<param name="root">product</param>
+			</result>
+			<!-- <result name="success" type="redirectAction">product</result>
+			<result name="success" type="redirectAction">productDetail</result> -->
+		</action>
+		<action name="updateProduct"
+			class="com.example.shopping.demo.controller.ProductAction"
+			method="updateProduct">
+			<result name="success" type="redirectAction">product</result>
 			<result name="ERROR">/productDetail.jsp</result> 
 		</action>
 	</package>

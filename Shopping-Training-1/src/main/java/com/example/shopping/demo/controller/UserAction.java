@@ -356,12 +356,14 @@ public String editUser() {
     }
 
     public String pageUser() {
-    	int total = userMapper.getByUsersList(fullname, email, getGroup(), getActive()).size();
+    	String user_nameNew = getFullname().trim();
+    	String user_EmailNew = getEmail().trim();
+    	int total = userMapper.getByUsersList(user_nameNew, user_EmailNew, getGroup(), getActive()).size();
     	List<User> nextList;
     	if(getPage()== 1) {
-       	 	nextList = userMapper.getByUsers(fullname, email, getGroup(), getActive());
+       	 	nextList = userMapper.getByUsers(user_nameNew, user_EmailNew, getGroup(), getActive());
        	}else {
-       		nextList = userMapper.getByUsersNext(fullname, email, getGroup(), getActive(), (getPage()-1)*10);
+       		nextList = userMapper.getByUsersNext(user_nameNew, user_EmailNew, getGroup(), getActive(), (getPage()-1)*10);
        		System.out.println("dữ liệu trang tiêp theo:" + nextList);
        	}
     	System.out.println("dữ liệu trang tiêp theo:" + nextList.size());

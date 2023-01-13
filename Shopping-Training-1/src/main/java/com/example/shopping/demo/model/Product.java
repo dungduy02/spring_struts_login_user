@@ -28,7 +28,7 @@ public class Product {
 	@Column(name = "product_image")
 	private String product_image;
 	@Column(name = "product_price")
-	private String product_price;
+	private double product_price;
 	@Column(name = "is_sales")
 	private String is_sales;
 	@Column(name = "description")
@@ -37,16 +37,7 @@ public class Product {
 	private String created_at;
 	@Column(name = "update_at")
 	private String update_at;
-
-	
-	
-	public String getProduct_id() {
-		return product_id;
-	}
-	public void setProduct_id(String product_id) {
-		this.product_id = product_id;
-	}
-	public Product(String product_id, String product_name, String product_image, String product_price, String is_sales,
+	public Product(String product_id, String product_name, String product_image, double product_price, String is_sales,
 			String description, String created_at, String update_at) {
 		super();
 		this.product_id = product_id;
@@ -57,6 +48,12 @@ public class Product {
 		this.description = description;
 		this.created_at = created_at;
 		this.update_at = update_at;
+	}
+	public String getProduct_id() {
+		return product_id;
+	}
+	public void setProduct_id(String product_id) {
+		this.product_id = product_id;
 	}
 	public String getProduct_name() {
 		return product_name;
@@ -70,10 +67,10 @@ public class Product {
 	public void setProduct_image(String product_image) {
 		this.product_image = product_image;
 	}
-	public String getProduct_price() {
+	public double getProduct_price() {
 		return product_price;
 	}
-	public void setProduct_price(String product_price) {
+	public void setProduct_price(double product_price) {
 		this.product_price = product_price;
 	}
 	public String getIs_sales() {
@@ -100,6 +97,8 @@ public class Product {
 	public void setUpdate_at(String update_at) {
 		this.update_at = update_at;
 	}
+
+	
 	
 	
 }

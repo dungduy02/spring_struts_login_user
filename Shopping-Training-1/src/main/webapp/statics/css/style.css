@@ -514,12 +514,15 @@ h1 {
 #update{
    text-align: end;
    margin-right: 10%;
+   display: flex;
+   flex-direction: row-reverse;
 }
 
-#update button{
+#update a{
    margin: 5px 10px;
    border: 0;
    padding: 10px 20px;
+   color: #000aff;
 }
 
 #update #exit{
@@ -527,11 +530,64 @@ h1 {
 }
 #update #save{
    color: wheat;
-   background: red;
+}
+#update #btnUpdate{
+   color: wheat;
+}
+
+#btnForm{
+	background: red;
+    margin: 5px 10px;
+    border: 0;
+}
+
+.hiddenImg{
+	display: none;
+}
+
+.note-editor .note-editable{
+border-top: 1px solid rgba(0,0,0,0.2) !important;
+margin:10px 0px  !important;
+}
+.note-toolbar{
+text-align:center  !important;
+}
+.note-editor{
+border:none  !important;
+margin:25px 0px  !important;
+}
+.note-editor .note-toolbar{
+border:none  !important;
+background-color:white  !important;
+}
+.btn-default{
+background:rgb(245,170,86)  !important;
+border:none  !important;
+font-size:1.3em  !important;
+}
+.btn-toolbar .btn-group{
+float:none  !important;
+}
+
+.btn {
+  border-radius:0px !important;
+}
+.btn-container {
+  text-align:center !important;
 }
 
 
-
-
-
-
+.setLengthText{
+  	display: block;
+  	display: -webkit-box;
+    width: 400px;
+  	height: 16px*1.3*3;
+  	font-size: 16px;
+  	line-height: 1.3;
+  	-webkit-line-clamp: 1;  /* số dòng hiển thị */
+  	-webkit-box-orient: vertical;
+  	overflow: hidden;
+  	text-overflow: ellipsis;
+  	margin-top:10px;
+  	
+}

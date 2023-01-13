@@ -59,8 +59,8 @@
 				</div>
 			</div>
 			<div class="admin">
-				<span class="icon">  <s:property value="#session.USER" />
-				</span> <a href="/logouts"><i class="fa fa-sign-out"></i>LOGOUT</a>
+				<span class="icon"><s:property value="#session.USER" /></span> <a
+					href="/logout"><i class="fa fa-sign-out"></i>LOGOUT</a>
 			</div>
 		</div>
 		<div class="title" style="border-bottom: 3px solid #9fc5e8; display: flex; justify-content: space-between;">
@@ -103,7 +103,7 @@
 								<span class="input-group-text1">Giá bán từ</span>
 							</div>
 							<input name="priceStart" type="text" class="inputForm" id="modalPriceStart"
-								placeholder="" style="height: 30px; width: 150px" value="0">
+								placeholder="Giá thấp nhất" style="height: 30px; width: 150px" value="" >
 						</div>
 						<div style="margin: auto 20px;">~</div>
 						<div style="width: 50%">
@@ -111,7 +111,7 @@
 								<span class="input-group-text1">Giá bán đến</span>
 							</div>
 							<input name="priceEnd" type="text" class="inputForm" id="modalPriceEnd"
-								placeholder="" style="height: 30px; width: 150px" value="0">
+								placeholder="Giá cao nhất" style="height: 30px; width: 150px" value="">
 						</div>
 					</div>
 				</div>
@@ -126,7 +126,7 @@
 				<div class="addNew formProduct" style="justify-content: space-between;">
 					<div>
 						<div class="input-group-prepend">
-							<a href="#" onclick="openAddProduct()"> <span
+							<a href="/productDetail" onclick="openAddProduct()"> <span
 								class="input-group-text colorbtn"><i
 									class="fa fa-address-book"></i>Thêm mới</span></a>
 						</div>
