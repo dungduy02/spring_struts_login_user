@@ -1,0 +1,104 @@
+																								
+-- --câu 1
+SELECT model.model_code, model.model_hyouji, model.model_name_prefix, model.model_kana_prefix, 
+	(IF(LEFT(model.model_hyouji, 1) REGEXP '[^a-zA-Z0-9]',2, IF(cast(LEFT(model.model_hyouji, 1) AS UNSIGNED),0,1))) AS prefix , 		model.model_count 
+FROM mst_model_v2 AS model 
+WHERE model.model_maker_code = 1 
+	AND (model.model_displacement BETWEEN 51 AND 125) 
+	ORDER BY prefix, model.model_hyouji, model.model_kana_prefix
+
+-- câu 2
+SELECT maker.model_maker_hyouji, maker.model_maker_code, model.model_image_url, model.model_hyouji, model.model_code, 
+	IF((model.model_kakaku_min IS NULL), 0,FORMAT(model.model_kakaku_min/10000,2)) AS model_kakaku_min, 
+	IF((model.model_kakaku_max IS NULL), 0,FORMAT(model.model_kakaku_max/10000,2)) AS model_kakaku_max, model.model_count 
+FROM mst_model_v2 AS model INNER JOIN mst_model_maker AS maker ON model.model_maker_code = maker.model_maker_code
+WHERE (model.model_count > 0) 
+	AND (model.model_genchari = 1) 
+	AND (model.model_kana_prefix = 'ハ') 
+	AND (model.model_name_prefix = 'B') 
+	AND (model.model_motortype_code = 0) 
+	AND (model.model_displacement BETWEEN 0 AND 50) 
+	ORDER BY model.model_rank ASC, model.model_maker_code ASC, model.model_hyouji ASC;
+
+
+-- câu 3
+
+	SELECT model.model_displacement, model.model_hyouji AS motorcycle_model_name, 
+									model_series.model_code AS motorcycle_model_code, 
+									model.model_count AS motorcycle_count, 
+									model.model_image_url, 
+									IF((model.model_kakaku_min IS NULL), 0,FORMAT(model.model_kakaku_min/10000,2)) AS model_kakaku_min,
+									IF((model.model_kakaku_max IS NULL), 0,FORMAT(model.model_kakaku_max/10000,2)) AS model_kakaku_max 
+	 FROM  mst_model_series AS model_series 
+			INNER JOIN mst_series AS series ON series.series_code = model_series.series_code
+			LEFT JOIN mst_model_v2 AS model ON model_series.model_code = model.model_code AND model_series.maker_code = model.model_maker_code 
+	WHERE model_series.maker_code IN(9, 13, 37) 
+			AND series.series_code = 7 
+	ORDER BY model.model_displacement DESC
+
+
+-- câu 4:
+-- SELECT DISTINCT todou.todouhuken_code, todou.todouhuken_name, todou.todouhuken_area_code, area.area_name,
+-- 	(SELECT SUM(model1.model_count) FROM mst_model_v2 AS model1 WHERE model1.type_code = todou.todouhuken_code) AS cnt
+-- FROM mst_todouhuken AS todou 
+-- 	JOIN mst_area AS area ON todou.todouhuken_area_code = area.area_code 
+-- 	
+-- 	JOIN mst_model_v2 AS model ON todou.todouhuken_code = model.type_code 
+-- 	 
+-- 	JOIN search_motorcycle AS search_moto 
+-- 
+-- WHERE model.model_maker_code = 4 
+-- 		AND search_moto.dealer_todouhuken_code is NOT null 
+-- 		AND search_moto.motorcycle_jyoukyo IN(1, 5, 6)
+-- ORDER BY todou.todouhuken_area_code DESC, todou.todouhuken_code DESC
+	
+
+SELECT DISTINCT todou.todouhuken_code, todou.todouhuken_name, todou.todouhuken_area_code, area.area_name, 
+	IF((ms.cnt IS NOT NULL), ms.cnt, 0)
+ms.cnt
+FROM mst_todouhuken AS todou 
+	INNER JOIN mst_area AS area ON todou.todouhuken_area_code = area.area_code 
+	LEFT JOIN
+	(
+		SELECT model1.model_maker_code, model1.type_code, model1.model_name, SUM(model1.model_count) AS cnt 
+FROM mst_model_v2 AS model1 
+		GROUP BY model1.type_code
+	) AS ms ON ms.type_code = todou.todouhuken_code
+	
+	INNER JOIN search_motorcycle AS search_moto
+	
+WHERE ms.model_maker_code = 4 
+		AND search_moto.dealer_todouhuken_code is NOT null 
+		AND search_moto.motorcycle_jyoukyo IN(1, 5, 6)
+		
+ORDER BY todou.todouhuken_area_code , todou.todouhuken_code 
+
+
+
+
+
+
+SELECT DISTINCT todou.todouhuken_code, todou.todouhuken_name, todou.todouhuken_area_code, area.area_name, 
+	IF((ms.cnt IS NOT NULL), ms.cnt, 0) as cnt
+-- ms.cnt
+FROM mst_todouhuken AS todou 
+
+	INNER JOIN mst_area AS area ON todou.todouhuken_area_code = area.area_code 
+	
+	LEFT JOIN
+	(
+		SELECT search_moto.dealer_todouhuken_code, 
+				SUM(model1.model_count) AS cnt 
+		FROM mst_model_v2 AS model1 
+				INNER JOIN search_motorcycle AS search_moto ON model1.model_code = search_moto.motorcycle_model_code
+				
+		WHERE model1.model_maker_code = 4 
+			AND search_moto.dealer_todouhuken_code is NOT null 
+			AND search_moto.motorcycle_jyoukyo IN(1, 5, 6)
+			
+		GROUP BY search_moto.dealer_todouhuken_code
+	) AS ms ON ms.dealer_todouhuken_code = todou.todouhuken_code
+	
+ORDER BY todou.todouhuken_area_code, todou.todouhuken_code
+
+
